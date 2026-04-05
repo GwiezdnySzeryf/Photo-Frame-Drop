@@ -21,8 +21,7 @@ app = FastAPI(title="Photo Frame Drop API")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Mount static files and templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount templates
 templates = Jinja2Templates(directory="templates")
 
 # Configuration from HA Add-on options

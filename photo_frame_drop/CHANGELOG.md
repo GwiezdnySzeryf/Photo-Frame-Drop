@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.10] - 2026-04-05
+### Fixed
+- Completely removed `app.mount("/static", ...)` to prevent initialization crashes if the `static` directory behaves unreliably across file transfers or container builds.
+
 ## [1.0.9] - 2026-04-05
 ### Fixed
 - Fixed an `IndentationError` in `main.py` caused by a malformed find-and-replace edit that duplicated endpoints. Application now starts correctly without crash loops.
