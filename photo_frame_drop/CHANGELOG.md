@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.3] - 2026-04-05
+### Fixed
+- Removed deprecated 32-bit architectures (`armhf`, `armv7`, `i386`) from `config.yaml`, `build.yaml`, and `Dockerfile` labels to clear Supervisor warnings. Home Assistant Add-ons are moving towards 64-bit only (`aarch64`, `amd64`).
+
 ## [2.0.2] - 2026-04-05
 ### Fixed
 - Fixed build error on ARM platforms where Supervisor would fall back to a generic Alpine image without Python. Added `build.yaml` to strictly define the `base-python` image for all architectures.

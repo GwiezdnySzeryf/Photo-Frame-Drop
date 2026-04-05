@@ -1,14 +1,11 @@
 name: "Photo Frame Drop"
-version: "2.0.2"
+version: "2.0.3"
 slug: photo_frame_drop
 description: "Drag & drop photos into your HA /media folder from anywhere, with a gallery and password protection."
 url: "https://github.com/GwiezdnySzeryf/Photo-Frame-Drop"
 arch:
   - aarch64
   - amd64
-  - armhf
-  - armv7
-  - i386
 
 init: false
 hassio_api: true

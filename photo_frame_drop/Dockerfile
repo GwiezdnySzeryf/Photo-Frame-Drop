@@ -29,6 +29,6 @@ RUN chmod a+x \
 COPY app/ /app/
 
 LABEL \
-    io.hass.version="2.0.2" \
+    io.hass.version="2.0.3" \
     io.hass.type="addon" \
-    io.hass.arch="aarch64|amd64|armhf|armv7|i386"
+    io.hass.arch="aarch64|amd64"
