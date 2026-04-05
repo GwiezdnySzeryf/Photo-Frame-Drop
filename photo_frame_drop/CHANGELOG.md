@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.1] - 2026-04-05
+### Fixed
+- Fixed `pip: not found` error during add-on build by switching to `pip3` in the Dockerfile.
+
 ## [2.0.0] — 2024-04-05
 
 ### Breaking changes
