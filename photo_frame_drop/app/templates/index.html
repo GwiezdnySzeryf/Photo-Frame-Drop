@@ -11,9 +11,7 @@
   <header>
     <span class="header-icon">🖼️</span>
     <h1>Photo Frame Drop</h1>
-    <form method="POST" action="/logout" style="margin-left:auto">
-      <button type="submit" class="btn-ghost">Sign out</button>
-    </form>
+    <button type="button" class="btn-ghost" id="btn-logout" style="margin-left:auto">Sign out</button>
   </header>
 
   <!-- ─── Upload zone ─────────────────────────────────────────────── -->
@@ -58,6 +56,17 @@
 
   <script>
     "use strict";
+
+    document.getElementById("btn-logout").addEventListener("click", async () => {
+      try {
+        await fetch("/logout", { 
+          method: "POST", 
+          headers: { "X-Requested-With": "XMLHttpRequest" }
+        });
+      } finally {
+        window.location.reload();
+      }
+    });
 
     // ── Upload logic ─────────────────────────────────────────────────
 
@@ -106,6 +115,7 @@
 
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "/upload");
+      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
       xhr.upload.addEventListener("progress", e => {
         if (e.lengthComputable) {
@@ -142,7 +152,7 @@
 
     async function refreshGallery() {
       try {
-        const resp = await fetch("/photos");
+        const resp = await fetch("/photos", { headers: { "X-Requested-With": "XMLHttpRequest" } });
         if (!resp.ok) return;
         const { photos, total } = await resp.json();
 
@@ -196,7 +206,10 @@
       if (!confirm(`Delete "${filename}"?`)) return;
       card.classList.add("deleting");
       try {
-        const resp = await fetch(`/photos/${encodeURIComponent(filename)}`, { method: "DELETE" });
+        const resp = await fetch(`/photos/${encodeURIComponent(filename)}`, { 
+            method: "DELETE",
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        });
         if (resp.ok) {
           card.remove();
           refreshGallery(); // refresh count

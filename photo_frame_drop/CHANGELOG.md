@@ -5,6 +5,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.6] - 2026-04-05
+### Security
+- Fixed multiple vulnerabilities reported in security audit:
+  - **Deterministic sessions**: Add-on now generates a random secure secret on startup (`secrets.token_urlsafe(32)`) to mix into the session hash, preventing session token prediction.
+  - **Rate limiting**: Added in-memory rate limiting to the `/login` route (blocks IP after 5 failed attempts within 5 minutes) to protect against brute-force attacks.
+  - **Secure Cookie**: The `pfd_session` cookie now properly uses `secure=True` if the request was made over HTTPS (checked via `X-Forwarded-Proto` or scheme).
+  - **CSRF Protection**: Added strict `X-Requested-With: XMLHttpRequest` header checks for all API endpoints (`/upload`, `/photos`, `/logout`) to prevent Cross-Site Request Forgery.
+  - **Logging**: The rate limiter and login functions now properly extract the real client IP using the `X-Forwarded-For` header instead of relying purely on the internal proxy IP.
+
 ## [2.0.5] - 2026-04-05
 ### Changed
 - Re-exposed `8099/tcp` in the `ports` configuration to allow direct, independent network access (e.g. for reverse proxy or external sharing) while still maintaining the internal HA Ingress functionality.

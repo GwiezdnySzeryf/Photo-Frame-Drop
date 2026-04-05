@@ -12,13 +12,14 @@ DELETE /photos/{filename}  Delete a specific photo
 GET  /static/...           Static assets (CSS, JS)
 """
 
-from __future__ import annotations
-
 import hashlib
 import logging
-import mimetypes
+import os
 import re
+import secrets
+import time
 import uuid
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -29,12 +30,16 @@ from notifications import send_ha_notification
 
 logger = logging.getLogger("photo_frame_drop.server")
 
-# Only allow filenames made of safe characters
 _UNSAFE_CHARS = re.compile(r"[^\w\-. ]")
+_SESSION_SECRET = secrets.token_urlsafe(
+    32
+)  # Random secret generated on startup prevents deterministic sessions
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 STATIC_DIR = Path(__file__).parent / "static"
 
+# Rate Limiting Store
+_failed_logins: dict[str, list[float]] = defaultdict(list)
 
 # ---------------------------------------------------------------------------- #
 # Helpers                                                                       #
@@ -49,8 +54,8 @@ def _sanitize_filename(name: str) -> str:
 
 
 def _session_value(password: str) -> str:
-    """Derive a deterministic session token from the configured password."""
-    return hashlib.sha256(f"pfd:{password}".encode()).hexdigest()
+    """Derive a session token combining the password and a dynamic startup secret."""
+    return hashlib.sha256(f"pfd:{password}:{_SESSION_SECRET}".encode()).hexdigest()
 
 
 def _is_authenticated(config: dict[str, Any], request: web.Request) -> bool:
@@ -63,6 +68,29 @@ def _require_auth(config: dict[str, Any], request: web.Request) -> None:
         raise web.HTTPUnauthorized(reason="Authentication required")
 
 
+def _check_csrf(request: web.Request) -> None:
+    """Basic CSRF protection for API endpoints."""
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        raise web.HTTPForbidden(reason="CSRF check failed (missing X-Requested-With)")
+
+
+def _get_client_ip(request: web.Request) -> str:
+    """Get the real client IP, even behind HA Ingress/Proxy."""
+    return request.headers.get("X-Forwarded-For", request.remote).split(",")[0].strip()
+
+
+def _is_rate_limited(ip: str) -> bool:
+    """Check if the IP has exceeded 5 failed attempts in 5 minutes."""
+    now = time.time()
+    _failed_logins[ip] = [t for t in _failed_logins[ip] if now - t < 300]
+    return len(_failed_logins[ip]) >= 5
+
+
+def _record_failed_login(ip: str) -> None:
+    """Record a failed login attempt."""
+    _failed_logins[ip].append(time.time())
+
+
 # ---------------------------------------------------------------------------- #
 # App factory                                                                   #
 # ---------------------------------------------------------------------------- #
@@ -70,7 +98,6 @@ def _require_auth(config: dict[str, Any], request: web.Request) -> None:
 
 def create_app(config: dict[str, Any]) -> web.Application:
     """Create and configure the aiohttp Application."""
-    # max request size = configured limit + 64 KB headroom for multipart headers
     app = web.Application(client_max_size=config["max_bytes"] + 65536)
     app["config"] = config
 
@@ -99,7 +126,7 @@ def _get_base_path(request: web.Request) -> str:
 
 
 async def handle_health(request: web.Request) -> web.Response:
-    """Watchdog endpoint — must stay fast and side-effect-free."""
+    """Watchdog endpoint."""
     return web.json_response({"status": "ok"})
 
 
@@ -115,39 +142,50 @@ async def handle_index(request: web.Request) -> web.Response:
 
     text = (TEMPLATES_DIR / "index.html").read_text()
     text = text.replace('href="/static/', f'href="{base_path}/static/')
-    text = text.replace('action="/logout"', f'action="{base_path}/logout"')
     text = text.replace('"/upload"', f'"{base_path}/upload"')
     text = text.replace('"/photos"', f'"{base_path}/photos"')
     text = text.replace("`/photos/", f"`{base_path}/photos/")
+    text = text.replace('"/logout"', f'"{base_path}/logout"')
     return web.Response(text=text, content_type="text/html")
 
 
 async def handle_login(request: web.Request) -> web.Response:
     config: dict = request.app["config"]
     base_path = _get_base_path(request)
+    client_ip = _get_client_ip(request)
+
+    if _is_rate_limited(client_ip):
+        logger.warning("Rate limit exceeded for login from IP: %s", client_ip)
+        return web.HTTPTooManyRequests(
+            reason="Too many failed attempts. Try again in 5 minutes."
+        )
+
     data = await request.post()
     entered: str = data.get("password", "")
 
     if entered == config["password"]:
         response = web.HTTPFound(f"{base_path}/")
+        is_https = request.headers.get("X-Forwarded-Proto", request.scheme) == "https"
         response.set_cookie(
             "pfd_session",
             _session_value(config["password"]),
             httponly=True,
+            secure=is_https,
             samesite="Strict",
-            max_age=7 * 24 * 3600,  # 1 week
+            max_age=7 * 24 * 3600,
         )
-        logger.info("Successful login from %s", request.remote)
+        logger.info("Successful login from %s", client_ip)
         return response
 
-    logger.warning("Failed login attempt from %s", request.remote)
-    # Redirect back to login page with an error flag in the query string
+    _record_failed_login(client_ip)
+    logger.warning("Failed login attempt from %s", client_ip)
     return web.HTTPFound(f"{base_path}/?error=wrong_password")
 
 
 async def handle_logout(request: web.Request) -> web.Response:
+    _check_csrf(request)
     base_path = _get_base_path(request)
-    response = web.HTTPFound(f"{base_path}/")
+    response = web.json_response({"status": "logged_out"})
     response.del_cookie("pfd_session")
     return response
 
@@ -155,10 +193,9 @@ async def handle_logout(request: web.Request) -> web.Response:
 async def handle_upload(request: web.Request) -> web.Response:
     config: dict = request.app["config"]
     _require_auth(config, request)
+    _check_csrf(request)
 
     reader = await request.multipart()
-
-    # Drain fields until we hit the file field
     field = await reader.next()
     while field is not None and field.name != "file":
         field = await reader.next()
@@ -172,6 +209,8 @@ async def handle_upload(request: web.Request) -> web.Response:
     if not ext:
         raise web.HTTPBadRequest(reason="File has no extension.")
 
+    # Validation is strictly case-insensitive because config["allowed_extensions"]
+    # was converted to lowercase in main.py and `ext` is also converted to lowercase.
     if ext not in config["allowed_extensions"]:
         raise web.HTTPUnsupportedMediaType(
             reason=(
@@ -180,7 +219,6 @@ async def handle_upload(request: web.Request) -> web.Response:
             )
         )
 
-    # Build a unique destination filename to avoid silent overwrites
     safe_stem = _sanitize_filename(Path(original_name).stem)
     unique_suffix = uuid.uuid4().hex[:8]
     dest_name = f"{safe_stem}_{unique_suffix}.{ext}"
@@ -197,8 +235,7 @@ async def handle_upload(request: web.Request) -> web.Response:
                     break
                 total_bytes += len(chunk)
                 if total_bytes > max_bytes:
-                    # Clean up the partial file before raising
-                    await f.close()  # type: ignore[attr-defined]
+                    await f.close()
                     dest_path.unlink(missing_ok=True)
                     raise web.HTTPRequestEntityTooLarge(
                         max_size=max_bytes,
@@ -212,12 +249,13 @@ async def handle_upload(request: web.Request) -> web.Response:
             reason="Could not save file to disk."
         ) from exc
 
+    client_ip = _get_client_ip(request)
     logger.info(
         "Upload OK: %s → %s (%d bytes from %s)",
         original_name,
         dest_name,
         total_bytes,
-        request.remote,
+        client_ip,
     )
 
     if config["notify_on_upload"] and config["supervisor_token"]:
@@ -227,14 +265,14 @@ async def handle_upload(request: web.Request) -> web.Response:
         )
 
     return web.json_response(
-        {"status": "ok", "filename": dest_name, "bytes": total_bytes},
-        status=201,
+        {"status": "ok", "filename": dest_name, "bytes": total_bytes}, status=201
     )
 
 
 async def handle_list_photos(request: web.Request) -> web.Response:
     config: dict = request.app["config"]
     _require_auth(config, request)
+    _check_csrf(request)
 
     media_path = Path(config["media_path"])
     allowed: frozenset[str] = config["allowed_extensions"]
@@ -265,21 +303,17 @@ async def handle_list_photos(request: web.Request) -> web.Response:
 async def handle_delete_photo(request: web.Request) -> web.Response:
     config: dict = request.app["config"]
     _require_auth(config, request)
+    _check_csrf(request)
 
     raw_filename = request.match_info["filename"]
     filename = _sanitize_filename(raw_filename)
     media_root = Path(config["media_path"]).resolve()
     target = (media_root / filename).resolve()
 
-    # Path-traversal guard: resolved path must be inside media_root
-    try:
-        target.relative_to(media_root)
-    except ValueError:
+    # Enhanced Path-traversal guard: target must strictly be inside media_root
+    if not str(target).startswith(str(media_root)):
         logger.warning(
-            "Path traversal blocked: %r resolved to %s (outside %s)",
-            raw_filename,
-            target,
-            media_root,
+            "Path traversal blocked: %r resolved to %s", raw_filename, target
         )
         raise web.HTTPForbidden(reason="Path traversal attempt blocked.")
 
@@ -295,5 +329,6 @@ async def handle_delete_photo(request: web.Request) -> web.Response:
         logger.error("Cannot delete %s: %s", target, exc)
         raise web.HTTPInternalServerError(reason="Could not delete file.") from exc
 
-    logger.info("Deleted: %s (requested by %s)", filename, request.remote)
+    client_ip = _get_client_ip(request)
+    logger.info("Deleted: %s (requested by %s)", filename, client_ip)
     return web.json_response({"status": "deleted", "filename": filename})
