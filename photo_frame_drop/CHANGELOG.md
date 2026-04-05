@@ -1,67 +1,59 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to Photo Frame Drop are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+---
 
-## [1.0.10] - 2026-04-05
-### Fixed
-- Completely removed `app.mount("/static", ...)` to prevent initialization crashes if the `static` directory behaves unreliably across file transfers or container builds.
+## [2.0.0] — 2024-04-05
 
-## [1.0.9] - 2026-04-05
-### Fixed
-- Fixed an `IndentationError` in `main.py` caused by a malformed find-and-replace edit that duplicated endpoints. Application now starts correctly without crash loops.
+### Breaking changes
 
-## [1.0.8] - 2026-04-05
-### Fixed
-- Fixed Home Assistant Ingress URL routing. Ingress accesses the app through a dynamic path (`/api/hassio_ingress/xxx`), which caused infinite redirect loops (`302 Found`). Added `X-Ingress-Path` handling to the backend and injected `base_path` to all HTML templates and API endpoints.
+- **Python web server replaced**: Flask (synchronous) replaced with `aiohttp`
+  (async). Concurrent uploads no longer block each other.
+- **Service entrypoint restructured**: `run.sh` replaced with a proper s6-overlay
+  service under `rootfs/etc/services.d/`. Behaviour is identical from the user's
+  perspective.
+- **Filenames are now unique**: uploaded files get a random 8-character suffix
+  appended (e.g. `photo_a3f9c12b.jpg`) to prevent silent overwrites. Old files
+  in `/media` are not affected.
 
-## [1.0.7] - 2026-04-05
-### Fixed
-- Fixed runtime crash `RuntimeError: Directory 'static' does not exist` by ensuring the `static` directory is tracked by Git using a `.keep` file.
-
-## [1.0.6] - 2026-04-05
-### Fixed
-- Removed raw `ports` configuration to fix conflicts with `ingress` which was causing unknown build errors in Supervisor on modern HA versions.
-
-## [1.0.5] - 2026-04-05
-### Fixed
-- Fixed `pip: not found` error during build by using `pip3` instead of `pip` (Alpine's `py3-pip` package uses `pip3` alias).
-
-## [1.0.4] - 2026-04-05
-### Fixed
-- Fixed build error caused by Supervisor overriding the `BUILD_FROM` argument. Explicitly installed `python3` and `py3-pip` in the Dockerfile.
-- Added `--break-system-packages` to `pip install` to support newer Alpine versions (PEP 668).
-
-## [1.0.3] - 2026-04-05
-### Fixed
-- Updated base image to `ghcr.io/hassio-addons/base-python:18.0.0`
-- Reverted to `python-magic` and fixed Alpine C-dependencies by adding `file` package alongside `libmagic`.
-- Optimized Dockerfile to use `pip` alias from newer base image.
-
-## [1.0.2] - 2026-04-05
-### Fixed
-- Fixed Docker image build errors on ARM architectures by removing `pillow` dependency (not used for core functionality).
-- Replaced `python-magic` (requires C-libraries) with pure-python `filetype` to ensure cross-platform compatibility.
-
-## [1.0.1] - 2026-04-05
-### Fixed
-- Fixed build error by replacing deprecated `homeassistant_api`/`hassio_api` with `ingress` config
-- Improved security with proper MIME type checking (python-magic)
-- Added rate limiting to login endpoint (slowapi)
-- Added upload file size limits (25MB)
-- Removed default plain-text password from config
-- Added path traversal protection in config schema
-- Cleaned up duplicate requirements
-
-## [1.0.0] - 2026-04-05
 ### Added
-- Initial release
-- Beautiful user interface based on Midnight Slate design
-- Drag & Drop photo upload
-- Gallery management (view and delete photos)
-- Home Assistant Media folder integration
-- Home Assistant persistent notifications on successful upload
-- Password protection with rate limiting
-- File size and MIME type validation
+
+- `watchdog` field in `config.yaml` — Supervisor now auto-restarts the add-on
+  if the `/health` endpoint stops responding.
+- `ingress: true` — add-on is accessible via the HA sidebar with no port
+  forwarding required.
+- `translations/en.yaml` — configuration option labels are now human-readable
+  in the HA UI instead of showing raw key names.
+- Path-traversal protection on file delete: resolved paths are validated against
+  the media root before deletion.
+- Per-chunk upload size enforcement: oversized uploads are rejected mid-stream
+  and partial files are cleaned up.
+- `notify_on_upload` option: sends a HA persistent notification via the
+  Supervisor REST API after each successful upload.
+- Sign out button in the gallery UI.
+- Upload progress bar per file.
+- Startup warning in logs if the default password `changeme` is still in use.
+- Input validation in `run.sh`: rejects `target_folder` values containing `..`
+  or starting with `/`.
+- `finish` service script: logs non-zero exit codes instead of silent failure.
+
+### Fixed
+
+- Session cookie is now `HttpOnly` and `SameSite=Strict`.
+- Session value is a SHA-256 hash of the password, not the plaintext password.
+- `allowed_extensions` is now enforced server-side, not just in the file picker.
+- `max_upload_mb` is enforced per-chunk during streaming, not after full receipt.
+
+### Changed
+
+- Multi-arch support: `Dockerfile` uses `ARG BUILD_FROM` against the official
+  HA base Python image, supporting `aarch64`, `amd64`, `armhf`, `armv7`, `i386`.
+- All Python dependencies pinned to exact versions in `requirements.txt`.
+
+---
+
+## [1.x.x] — Initial releases
+
+Original Flask-based implementation.

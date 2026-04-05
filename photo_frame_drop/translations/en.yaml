@@ -1,0 +1,30 @@
+configuration:
+  target_folder:
+    name: Target Folder
+    description: >-
+      Subfolder inside /media where photos will be saved.
+      Example: digital_frame → saves to /media/digital_frame/
+  password:
+    name: Access Password
+    description: >-
+      Password to protect the upload interface.
+      IMPORTANT: Change the default value before use.
+  max_upload_mb:
+    name: Max Upload Size (MB)
+    description: Maximum allowed file size per individual upload (1–500 MB).
+  allowed_extensions:
+    name: Allowed File Extensions
+    description: >-
+      Comma-separated list of permitted file extensions without dots.
+      Example: jpg,jpeg,png,gif,webp
+  notify_on_upload:
+    name: Notify on Upload
+    description: >-
+      Send a Home Assistant persistent notification every time
+      a photo is successfully uploaded.
+  notify_message:
+    name: Notification Message
+    description: Text of the HA notification sent after each successful upload.
+
+network:
+  8099/tcp: Photo Frame Drop web interface

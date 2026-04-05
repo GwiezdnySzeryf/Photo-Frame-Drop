@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photo Frame Drop</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- ─── Header ─────────────────────────────────────────────────── -->
+  <header>
+    <span class="header-icon">🖼️</span>
+    <h1>Photo Frame Drop</h1>
+    <form method="POST" action="/logout" style="margin-left:auto">
+      <button type="submit" class="btn-ghost">Sign out</button>
+    </form>
+  </header>
+
+  <!-- ─── Upload zone ─────────────────────────────────────────────── -->
+  <main>
+    <section class="upload-section">
+      <div
+        id="drop-zone"
+        class="drop-zone"
+        role="button"
+        tabindex="0"
+        aria-label="Drop photos here or click to select"
+      >
+        <div class="drop-zone-inner">
+          <span class="drop-icon">📷</span>
+          <p class="drop-label">Drag &amp; drop photos here</p>
+          <p class="drop-sub">or click to choose files</p>
+          <input
+            type="file"
+            id="file-input"
+            accept="image/*"
+            multiple
+            style="display:none"
+          />
+        </div>
+      </div>
+
+      <!-- Upload progress list -->
+      <ul id="upload-list" class="upload-list" aria-live="polite"></ul>
+    </section>
+
+    <!-- ─── Gallery ─────────────────────────────────────────────────── -->
+    <section class="gallery-section">
+      <div class="gallery-header">
+        <h2>Uploaded Photos</h2>
+        <span id="photo-count" class="photo-count"></span>
+      </div>
+      <div id="gallery" class="gallery">
+        <p class="gallery-empty" id="gallery-empty">No photos yet.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    // ── Upload logic ─────────────────────────────────────────────────
+
+    const dropZone   = document.getElementById("drop-zone");
+    const fileInput  = document.getElementById("file-input");
+    const uploadList = document.getElementById("upload-list");
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fileInput.click(); });
+
+    dropZone.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropZone.classList.add("drag-over");
+    });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+      uploadFiles([...e.dataTransfer.files]);
+    });
+
+    fileInput.addEventListener("change", () => {
+      uploadFiles([...fileInput.files]);
+      fileInput.value = "";
+    });
+
+    function uploadFiles(files) {
+      files.forEach(uploadSingleFile);
+    }
+
+    function uploadSingleFile(file) {
+      const li = document.createElement("li");
+      li.className = "upload-item";
+      li.innerHTML = `
+        <span class="upload-name">${escapeHtml(file.name)}</span>
+        <span class="upload-status pending">Uploading…</span>
+        <progress class="upload-progress" value="0" max="100"></progress>
+      `;
+      uploadList.prepend(li);
+
+      const status   = li.querySelector(".upload-status");
+      const progress = li.querySelector(".upload-progress");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/upload");
+
+      xhr.upload.addEventListener("progress", e => {
+        if (e.lengthComputable) {
+          progress.value = Math.round((e.loaded / e.total) * 100);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        progress.remove();
+        if (xhr.status === 201) {
+          status.textContent = "✓ Done";
+          status.className = "upload-status success";
+          refreshGallery();
+        } else {
+          let reason = "Upload failed";
+          try { reason = JSON.parse(xhr.responseText).reason || reason; } catch (_) {}
+          status.textContent = `✗ ${reason}`;
+          status.className = "upload-status error";
+        }
+        // Auto-remove the status row after 5 seconds
+        setTimeout(() => li.remove(), 5000);
+      });
+
+      xhr.addEventListener("error", () => {
+        progress.remove();
+        status.textContent = "✗ Network error";
+        status.className = "upload-status error";
+      });
+
+      xhr.send(formData);
+    }
+
+    // ── Gallery logic ─────────────────────────────────────────────────
+
+    async function refreshGallery() {
+      try {
+        const resp = await fetch("/photos");
+        if (!resp.ok) return;
+        const { photos, total } = await resp.json();
+
+        const gallery = document.getElementById("gallery");
+        const countEl = document.getElementById("photo-count");
+        const emptyEl = document.getElementById("gallery-empty");
+
+        countEl.textContent = total > 0 ? `${total} photo${total !== 1 ? "s" : ""}` : "";
+        emptyEl.style.display = total === 0 ? "block" : "none";
+
+        // Remove cards for files no longer present
+        const existing = new Set([...gallery.querySelectorAll(".photo-card")].map(c => c.dataset.name));
+        const incoming = new Set(photos.map(p => p.name));
+        existing.forEach(name => {
+          if (!incoming.has(name)) gallery.querySelector(`[data-name="${CSS.escape(name)}"]`)?.remove();
+        });
+
+        // Add new cards (prepend so newest appears first)
+        for (const photo of photos) {
+          if (existing.has(photo.name)) continue;
+          const card = buildCard(photo);
+          gallery.insertBefore(card, gallery.firstChild);
+        }
+      } catch (e) {
+        console.warn("Gallery refresh failed:", e);
+      }
+    }
+
+    function buildCard(photo) {
+      const card = document.createElement("div");
+      card.className = "photo-card";
+      card.dataset.name = photo.name;
+
+      const sizeKb = (photo.size / 1024).toFixed(1);
+      const date   = new Date(photo.modified * 1000).toLocaleDateString();
+
+      card.innerHTML = `
+        <div class="photo-thumb">📄</div>
+        <div class="photo-info">
+          <span class="photo-name" title="${escapeHtml(photo.name)}">${escapeHtml(photo.name)}</span>
+          <span class="photo-meta">${sizeKb} KB · ${date}</span>
+        </div>
+        <button class="btn-delete" aria-label="Delete ${escapeHtml(photo.name)}">✕</button>
+      `;
+
+      card.querySelector(".btn-delete").addEventListener("click", () => deletePhoto(photo.name, card));
+      return card;
+    }
+
+    async function deletePhoto(filename, card) {
+      if (!confirm(`Delete "${filename}"?`)) return;
+      card.classList.add("deleting");
+      try {
+        const resp = await fetch(`/photos/${encodeURIComponent(filename)}`, { method: "DELETE" });
+        if (resp.ok) {
+          card.remove();
+          refreshGallery(); // refresh count
+        } else {
+          card.classList.remove("deleting");
+          alert("Could not delete file.");
+        }
+      } catch {
+        card.classList.remove("deleting");
+        alert("Network error.");
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[c]);
+    }
+
+    // Load gallery on page open
+    refreshGallery();
+  </script>
+</body>
+</html>

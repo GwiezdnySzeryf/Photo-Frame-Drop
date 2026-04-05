@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Photo Frame Drop — service exit handler
+# $1 = exit code of the run script
+# $2 = exit signal (if any)
+# ==============================================================================
+
+exit_code=$1
+
+if [ "${exit_code}" -eq 0 ]; then
+    bashio::log.info "Photo Frame Drop service stopped cleanly."
+else
+    bashio::log.error "Photo Frame Drop service exited with code ${exit_code}. Check logs above."
+fi

@@ -1,0 +1,83 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Photo Frame Drop — service launcher
+# Reads add-on config via bashio, validates it, then starts the Python server.
+# ==============================================================================
+
+declare target_folder
+declare password
+declare max_upload_mb
+declare allowed_extensions
+declare notify_on_upload
+declare notify_message
+
+bashio::log.info "Photo Frame Drop starting..."
+
+# ---------------------------------------------------------------------------- #
+# Validate required config values                                               #
+# ---------------------------------------------------------------------------- #
+
+if ! bashio::config.has_value "target_folder"; then
+    bashio::log.fatal "'target_folder' must be set in add-on configuration."
+    bashio::exit.nok
+fi
+
+if ! bashio::config.has_value "password"; then
+    bashio::log.fatal "'password' must be set in add-on configuration."
+    bashio::exit.nok
+fi
+
+target_folder=$(bashio::config "target_folder")
+password=$(bashio::config "password")
+max_upload_mb=$(bashio::config "max_upload_mb")
+allowed_extensions=$(bashio::config "allowed_extensions")
+notify_on_upload=$(bashio::config "notify_on_upload")
+notify_message=$(bashio::config "notify_message")
+
+# ---------------------------------------------------------------------------- #
+# Security warnings                                                             #
+# ---------------------------------------------------------------------------- #
+
+if [ "${password}" = "changeme" ]; then
+    bashio::log.warning "========================================================"
+    bashio::log.warning " You are using the DEFAULT password ('changeme')."
+    bashio::log.warning " Change it immediately in the add-on Configuration tab."
+    bashio::log.warning "========================================================"
+fi
+
+# ---------------------------------------------------------------------------- #
+# Validate and create the target media directory                               #
+# ---------------------------------------------------------------------------- #
+
+# Refuse folder names that could escape /media (e.g. "../secret")
+if [[ "${target_folder}" == *".."* ]] || [[ "${target_folder}" == "/"* ]]; then
+    bashio::log.fatal "Invalid target_folder '${target_folder}': must be a plain folder name, not a path."
+    bashio::exit.nok
+fi
+
+media_path="/media/${target_folder}"
+
+if ! mkdir -p "${media_path}"; then
+    bashio::log.fatal "Cannot create media directory: ${media_path}"
+    bashio::log.fatal "Ensure the add-on has 'media' mapped with write access."
+    bashio::exit.nok
+fi
+
+bashio::log.info "Photos will be saved to: ${media_path}"
+
+# ---------------------------------------------------------------------------- #
+# Export config as environment variables for the Python process                #
+# ---------------------------------------------------------------------------- #
+
+export PHOTO_FRAME_MEDIA_PATH="${media_path}"
+export PHOTO_FRAME_PASSWORD="${password}"
+export PHOTO_FRAME_MAX_MB="${max_upload_mb}"
+export PHOTO_FRAME_EXTENSIONS="${allowed_extensions}"
+export PHOTO_FRAME_NOTIFY="${notify_on_upload}"
+export PHOTO_FRAME_NOTIFY_MSG="${notify_message}"
+export PHOTO_FRAME_SUPERVISOR_TOKEN="${SUPERVISOR_TOKEN}"
+export PHOTO_FRAME_PORT="8099"
+
+bashio::log.info "Configuration loaded. Launching web server on port 8099..."
+
+exec python3 /app/main.py
