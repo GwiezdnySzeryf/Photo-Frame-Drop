@@ -56,17 +56,7 @@
 
   <script>
     "use strict";
-
-    document.getElementById("btn-logout").addEventListener("click", async () => {
-      try {
-        await fetch("/logout", { 
-          method: "POST", 
-          headers: { "X-Requested-With": "XMLHttpRequest" }
-        });
-      } finally {
-        window.location.reload();
-      }
-    });
+    window.basePath = "{{ base_path }}";
 
     // ── Upload logic ─────────────────────────────────────────────────
 
@@ -190,7 +180,9 @@
       const date   = new Date(photo.modified * 1000).toLocaleDateString();
 
       card.innerHTML = `
-        <div class="photo-thumb">📄</div>
+        <div class="photo-thumb">
+          <img src="\${window.basePath || ''}/media/\${encodeURIComponent(photo.name)}" alt="\${escapeHtml(photo.name)}" loading="lazy" />
+        </div>
         <div class="photo-info">
           <span class="photo-name" title="${escapeHtml(photo.name)}">${escapeHtml(photo.name)}</span>
           <span class="photo-meta">${sizeKb} KB · ${date}</span>

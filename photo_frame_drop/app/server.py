@@ -108,6 +108,7 @@ def create_app(config: dict[str, Any]) -> web.Application:
     app.router.add_post("/upload", handle_upload)
     app.router.add_get("/photos", handle_list_photos)
     app.router.add_delete("/photos/{filename}", handle_delete_photo)
+    app.router.add_get("/media/{filename}", handle_get_media)
 
     if STATIC_DIR.is_dir():
         app.router.add_static("/static", STATIC_DIR, show_index=False)
@@ -146,6 +147,7 @@ async def handle_index(request: web.Request) -> web.Response:
     text = text.replace('"/photos"', f'"{base_path}/photos"')
     text = text.replace("`/photos/", f"`{base_path}/photos/")
     text = text.replace('"/logout"', f'"{base_path}/logout"')
+    text = text.replace("{{ base_path }}", base_path)
     return web.Response(text=text, content_type="text/html")
 
 
@@ -332,3 +334,24 @@ async def handle_delete_photo(request: web.Request) -> web.Response:
     client_ip = _get_client_ip(request)
     logger.info("Deleted: %s (requested by %s)", filename, client_ip)
     return web.json_response({"status": "deleted", "filename": filename})
+
+
+async def handle_get_media(request: web.Request) -> web.Response:
+    config: dict = request.app["config"]
+    _require_auth(config, request)
+
+    raw_filename = request.match_info["filename"]
+    filename = _sanitize_filename(raw_filename)
+    media_root = Path(config["media_path"]).resolve()
+    target = (media_root / filename).resolve()
+
+    if not str(target).startswith(str(media_root)):
+        logger.warning(
+            "Path traversal blocked: %r resolved to %s", raw_filename, target
+        )
+        raise web.HTTPForbidden(reason="Path traversal attempt blocked.")
+
+    if not target.exists() or not target.is_file():
+        raise web.HTTPNotFound(reason=f"File '{filename}' not found.")
+
+    return web.FileResponse(target)

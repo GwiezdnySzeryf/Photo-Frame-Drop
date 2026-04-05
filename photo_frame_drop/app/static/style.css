@@ -222,7 +222,23 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 }
 .photo-card.deleting { opacity: .4; pointer-events: none; }
 
-.photo-thumb { font-size: 1.75rem; }
+.photo-thumb { 
+  font-size: 1.75rem; 
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .photo-info {
   display: flex;

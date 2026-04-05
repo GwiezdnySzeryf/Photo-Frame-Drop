@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.7] - 2026-04-05
+### Added
+- Image previews in the gallery! Instead of a generic document icon, the gallery now shows a square thumbnail preview of each uploaded photo. 
+
 ## [2.0.6] - 2026-04-05
 ### Security
 - Fixed multiple vulnerabilities reported in security audit:
