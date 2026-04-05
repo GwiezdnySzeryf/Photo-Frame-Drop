@@ -181,7 +181,7 @@
 
       card.innerHTML = `
         <div class="photo-thumb">
-          <img src="\${window.basePath || ''}/media/\${encodeURIComponent(photo.name)}" alt="\${escapeHtml(photo.name)}" loading="lazy" />
+          <img src="${window.basePath || ''}/media/${encodeURIComponent(photo.name)}" alt="${escapeHtml(photo.name)}" loading="lazy" />
         </div>
         <div class="photo-info">
           <span class="photo-name" title="${escapeHtml(photo.name)}">${escapeHtml(photo.name)}</span>

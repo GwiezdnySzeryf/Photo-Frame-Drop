@@ -224,14 +224,15 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 
 .photo-thumb { 
   font-size: 1.75rem; 
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border-radius: 6px;
   background: var(--bg);
+  flex-shrink: 0;
 }
 
 .photo-thumb img {
