@@ -1,8 +1,10 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/base-python:3.12-alpine3.19
+ARG BUILD_FROM
 FROM $BUILD_FROM
 
 # Install OS-level dependencies needed by Pillow and aiohttp
 RUN apk add --no-cache \
+    python3 \
+    py3-pip \
     build-base \
     libffi-dev \
     libjpeg-turbo-dev \
@@ -14,7 +16,7 @@ WORKDIR /app
 
 # Copy and install Python dependencies first (better layer caching)
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 # Copy s6-overlay service scripts
 COPY rootfs/ /
@@ -27,6 +29,6 @@ RUN chmod a+x \
 COPY app/ /app/
 
 LABEL \
-    io.hass.version="2.0.0" \
+    io.hass.version="2.0.2" \
     io.hass.type="addon" \
     io.hass.arch="aarch64|amd64|armhf|armv7|i386"

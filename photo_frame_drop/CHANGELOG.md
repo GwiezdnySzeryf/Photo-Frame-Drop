@@ -5,6 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.2] - 2026-04-05
+### Fixed
+- Fixed build error on ARM platforms where Supervisor would fall back to a generic Alpine image without Python. Added `build.yaml` to strictly define the `base-python` image for all architectures.
+- Added safety-net Python installation in Dockerfile in case a bare image is ever injected.
+
 ## [2.0.1] - 2026-04-05
 ### Fixed
 - Fixed `pip: not found` error during add-on build by switching to `pip3` in the Dockerfile.
