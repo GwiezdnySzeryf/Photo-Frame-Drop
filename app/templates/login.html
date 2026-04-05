@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="dark" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Photo Frame Drop - Logowanie</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#8aa0bc",
+                    "on-background": "#d6e7ff",
+                    "surface-container-lowest": "#000000",
+                    "surface-dim": "#020f1e",
+                    "tertiary-fixed": "#d5d1f2",
+                    "error": "#ee7d77",
+                    "primary-dim": "#a1bbdc",
+                    "on-primary-container": "#b9d2f5",
+                    "tertiary-dim": "#c7c3e3",
+                    "on-tertiary-fixed": "#35334d",
+                    "on-surface-variant": "#83aee1",
+                    "on-secondary-fixed-variant": "#475d77",
+                    "on-secondary-container": "#abc1df",
+                    "tertiary-container": "#d5d1f2",
+                    "secondary-dim": "#8aa0bc",
+                    "error-dim": "#bb5551",
+                    "surface-container": "#001b33",
+                    "on-secondary-fixed": "#2b4159",
+                    "inverse-on-surface": "#495667",
+                    "on-tertiary-container": "#484661",
+                    "on-surface": "#d6e7ff",
+                    "primary-fixed": "#d1e4ff",
+                    "on-error": "#490106",
+                    "inverse-primary": "#48617e",
+                    "surface-tint": "#afc9ea",
+                    "secondary-fixed": "#d1e4ff",
+                    "tertiary-fixed-dim": "#c7c3e3",
+                    "surface": "#020f1e",
+                    "surface-bright": "#002e51",
+                    "background": "#020f1e",
+                    "surface-container-low": "#001428",
+                    "surface-container-high": "#00213c",
+                    "on-error-container": "#ff9993",
+                    "inverse-surface": "#f8f9ff",
+                    "tertiary": "#e3dfff",
+                    "surface-container-highest": "#002746",
+                    "primary-container": "#2f4865",
+                    "error-container": "#7f2927",
+                    "on-primary": "#28425e",
+                    "secondary-fixed-dim": "#c0d6f5",
+                    "on-secondary": "#082138",
+                    "primary-fixed-dim": "#bdd7f9",
+                    "outline-variant": "#174a77",
+                    "primary": "#afc9ea",
+                    "on-tertiary": "#514f6a",
+                    "on-primary-fixed": "#27415d",
+                    "outline": "#4c78a8",
+                    "on-primary-fixed-variant": "#445d7b",
+                    "secondary-container": "#273d55",
+                    "surface-variant": "#002746",
+                    "on-tertiary-fixed-variant": "#52506b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col items-center justify-center p-6 selection:bg-primary-container selection:text-on-primary-container">
+
+<main class="w-full max-w-md space-y-12">
+<header class="text-center space-y-3">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-surface-container mb-4">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="photo_library">photo_library</span>
+</div>
+<h1 class="font-headline text-4xl font-extrabold tracking-tighter text-on-surface">
+                Photo Frame Drop
+            </h1>
+<p class="font-label text-on-surface-variant text-sm tracking-wide uppercase">
+                Dostęp do cyfrowej ramki
+            </p>
+</header>
+
+<section class="rounded-xl p-8 border border-outline-variant/15 bg-surface-container">
+<form id="login-form" class="space-y-8">
+<div id="error-message" class="hidden text-error text-sm font-medium text-center"></div>
+
+<div class="space-y-2">
+<label class="block font-label text-sm font-medium text-on-surface-variant ml-1" for="access-key">
+                        Klucz dostępu
+                    </label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border-0 rounded-lg py-4 px-5 text-on-surface placeholder:text-on-secondary-fixed-variant focus:ring-2 focus:ring-primary/50 transition-all font-body" id="access-key" name="access_key" placeholder="Wprowadź swój klucz..." type="password" required/>
+<div class="absolute inset-y-0 right-4 flex items-center text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-xl" data-icon="key">key</span>
+</div>
+</div>
+</div>
+
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all" type="submit">
+                    Zaloguj
+                    <span class="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+</section>
+
+<footer class="text-center">
+<p class="text-on-surface-variant text-xs font-label">
+                Wymagany autoryzowany klucz dostępu urządzenia.
+            </p>
+<div class="mt-8 flex justify-center gap-4">
+<div class="h-[2px] w-12 bg-surface-container-high rounded-full"></div>
+<div class="h-[2px] w-2 bg-primary rounded-full"></div>
+<div class="h-[2px] w-12 bg-surface-container-high rounded-full"></div>
+</div>
+</footer>
+</main>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const errorMessage = document.getElementById('error-message');
+    
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            window.location.href = '/upload';
+        } else {
+            errorMessage.textContent = data.message || 'Błąd logowania';
+            errorMessage.classList.remove('hidden');
+        }
+    } catch (error) {
+        errorMessage.textContent = 'Wystąpił błąd połączenia';
+        errorMessage.classList.remove('hidden');
+    }
+});
+</script>
+</body></html>

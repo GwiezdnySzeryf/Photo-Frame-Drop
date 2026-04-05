@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="dark" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Photo Frame Drop - Galeria</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#afc9ea",
+                        "primary-container": "#2f4865",
+                        "on-primary": "#28425e",
+                        "surface": "#020f1e",
+                        "surface-container-low": "#001428",
+                        "surface-container": "#001b33",
+                        "surface-container-high": "#00213c",
+                        "surface-container-highest": "#002746",
+                        "on-surface": "#d6e7ff",
+                        "on-surface-variant": "#83aee1",
+                        "outline-variant": "#174a77",
+                        "error": "#ee7d77"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col h-screen sticky top-0 bg-[#001428] w-64 border-r border-[#174a77]/15">
+<div class="px-8 py-10">
+<h1 class="text-xl font-black text-[#afc9ea] font-manrope tracking-tighter">Photo Frame Drop</h1>
+<p class="text-xs text-on-surface-variant font-medium mt-1">Twój osobisty kurator</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 bg-[#001b33] text-[#afc9ea] rounded-lg font-manrope text-sm font-medium" href="/gallery">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+                Galeria
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#00213c] transition-all rounded-lg font-manrope text-sm font-medium" href="/upload">
+<span class="material-symbols-outlined" data-icon="add_a_photo">add_a_photo</span>
+                Dodaj zdjęcia
+            </a>
+</nav>
+</aside>
+
+<div class="flex-1 flex flex-col min-w-0">
+<!-- Top App Bar -->
+<header class="bg-[#020f1e] text-[#afc9ea] font-manrope tracking-tight font-bold text-lg docked full-width top-0 z-10">
+<div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="md:hidden text-2xl font-bold tracking-tighter text-[#afc9ea]">Photo Frame Drop</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#afc9ea] border-b-2 border-[#afc9ea] pb-1 hover:text-white transition-colors duration-300" href="/gallery">Galeria</a>
+<a class="text-slate-400 hover:text-white transition-colors duration-300" href="/upload">Dodaj zdjęcia</a>
+</div>
+</div>
+</header>
+
+<main class="flex-1 px-8 py-12 max-w-screen-xl mx-auto w-full">
+<section class="mb-12 flex justify-between items-end">
+<div>
+    <h2 class="text-5xl font-manrope font-extrabold tracking-tighter text-on-surface mb-4">
+        Twoja Galeria
+    </h2>
+    <p class="text-on-surface-variant max-w-lg leading-relaxed">
+        Zdjęcia aktualnie wyświetlane w ramce cyfrowej.
+    </p>
+</div>
+<p class="text-sm font-label text-on-surface-variant">
+    Liczba zdjęć: <span class="text-on-surface font-medium">{{ images|length }}</span>
+</p>
+</section>
+
+{% if images %}
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for image in images %}
+    <div class="relative group rounded-xl overflow-hidden bg-surface-container-low aspect-square border border-outline-variant/10">
+        <img src="/api/image/{{ image }}" alt="{{ image }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+        
+        <!-- Hover Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-highest/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+            <p class="text-xs text-on-surface truncate mb-2 font-body">{{ image }}</p>
+            <div class="flex justify-between items-center">
+                <button onclick="deleteImage('{{ image }}')" class="p-2 bg-error/20 text-error rounded-full hover:bg-error/30 transition-colors backdrop-blur-sm" title="Usuń zdjęcie">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% else %}
+<section class="flex flex-col items-center justify-center py-20 text-center">
+    <div class="w-20 h-20 rounded-full bg-surface-container mb-6 flex items-center justify-center">
+        <span class="material-symbols-outlined text-4xl text-on-surface-variant">photo_library</span>
+    </div>
+    <h3 class="text-xl font-manrope font-bold mb-2">Galeria jest pusta</h3>
+    <p class="text-on-surface-variant mb-8 max-w-md">Nie masz jeszcze żadnych zdjęć w swojej cyfrowej ramce.</p>
+    <a href="/upload" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-manrope font-bold rounded-full hover:opacity-90 transition-all">
+        Dodaj pierwsze zdjęcia
+    </a>
+</section>
+{% endif %}
+
+</main>
+
+<!-- Bottom Navigation Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#001428] px-6 py-4 flex justify-around items-center z-20 border-t border-outline-variant/10">
+<a class="flex flex-col items-center gap-1 text-[#afc9ea]" href="/gallery">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="text-[10px] font-label">Galeria</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="/upload">
+<span class="material-symbols-outlined" data-icon="add_a_photo">add_a_photo</span>
+<span class="text-[10px] font-label">Dodaj</span>
+</a>
+</nav>
+</div>
+
+<script>
+    async function deleteImage(filename) {
+        if (!confirm(`Czy na pewno chcesz usunąć zdjęcie ${filename}?`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/delete/${filename}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Wystąpił błąd podczas usuwania zdjęcia.');
+            }
+        } catch (error) {
+            alert('Wystąpił błąd połączenia.');
+        }
+    }
+</script>
+</body></html>

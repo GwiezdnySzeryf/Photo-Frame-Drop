@@ -1,0 +1,27 @@
+name: "Photo Frame Drop"
+description: "Aplikacja WWW do przesyłania i zarządzania zdjęciami na cyfrowej ramce."
+version: "1.0.0"
+slug: "photo_frame_drop"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+map:
+  - media:rw
+options:
+  access_key: "sekretne_haslo"
+  upload_folder: "digital_frame"
+  notify_on_upload: true
+schema:
+  access_key: str
+  upload_folder: str
+  notify_on_upload: bool
+ports:
+  8000/tcp: 8000
+ports_description:
+  8000/tcp: "Interfejs WWW (dostępny z zewnątrz po wystawieniu portu)"
+homeassistant_api: true
+hassio_api: true

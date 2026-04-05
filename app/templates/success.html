@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html class="dark" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Photo Frame Drop - Sukces</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#afc9ea",
+                        "primary-container": "#2f4865",
+                        "on-primary": "#28425e",
+                        "surface": "#020f1e",
+                        "surface-container-low": "#001428",
+                        "surface-container": "#001b33",
+                        "surface-container-high": "#00213c",
+                        "on-surface": "#d6e7ff",
+                        "on-surface-variant": "#83aee1",
+                        "outline-variant": "#174a77",
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen items-center justify-center p-6">
+
+<main class="w-full max-w-lg text-center space-y-8">
+<div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-surface-container-high mb-4 shadow-[0_0_40px_rgba(175,201,234,0.15)]">
+<span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'wght' 400;">check_circle</span>
+</div>
+
+<h1 class="font-headline text-4xl font-extrabold tracking-tighter text-on-surface">
+        Ekspozycja Zaktualizowana
+    </h1>
+<p class="font-body text-on-surface-variant text-lg">
+        Zdjęcia zostały pomyślnie dodane do cyfrowej ramki. Wkrótce pojawią się na ekranie.
+    </p>
+
+<div class="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
+<a href="/upload" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-manrope font-bold rounded-full hover:shadow-[0_0_20px_rgba(175,201,234,0.2)] transition-all active:scale-[0.98]">
+        Dodaj więcej zdjęć
+    </a>
+<a href="/gallery" class="px-8 py-3 bg-transparent border border-outline-variant/30 text-on-surface font-manrope font-bold rounded-full hover:bg-surface-container-high transition-all active:scale-[0.98]">
+        Przejdź do galerii
+    </a>
+</div>
+</main>
+
+</body></html>
