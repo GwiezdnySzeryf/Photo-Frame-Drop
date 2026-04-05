@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.4] - 2026-04-05
+### Fixed
+- Fixed broken UI and `524 A timeout occurred` Cloudflare error when using HA Ingress. Ingress accesses the app through a dynamic path (`/api/hassio_ingress/xxx`), causing absolute HTML paths to route to the main HA domain and break out of the addon context. Handled `X-Ingress-Path` internally to serve properly routed frontend assets and redirects.
+
 ## [2.0.3] - 2026-04-05
 ### Fixed
 - Removed deprecated 32-bit architectures (`armhf`, `armv7`, `i386`) from `config.yaml`, `build.yaml`, and `Dockerfile` labels to clear Supervisor warnings. Home Assistant Add-ons are moving towards 64-bit only (`aarch64`, `amd64`).

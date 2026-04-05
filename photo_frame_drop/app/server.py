@@ -40,9 +40,10 @@ STATIC_DIR = Path(__file__).parent / "static"
 # Helpers                                                                       #
 # ---------------------------------------------------------------------------- #
 
+
 def _sanitize_filename(name: str) -> str:
     """Strip directory components and replace unsafe characters."""
-    name = Path(name).name          # removes any directory prefix
+    name = Path(name).name  # removes any directory prefix
     name = _UNSAFE_CHARS.sub("_", name)
     return name.strip() or "upload"
 
@@ -65,6 +66,7 @@ def _require_auth(config: dict[str, Any], request: web.Request) -> None:
 # ---------------------------------------------------------------------------- #
 # App factory                                                                   #
 # ---------------------------------------------------------------------------- #
+
 
 def create_app(config: dict[str, Any]) -> web.Application:
     """Create and configure the aiohttp Application."""
@@ -90,6 +92,12 @@ def create_app(config: dict[str, Any]) -> web.Application:
 # Route handlers                                                                #
 # ---------------------------------------------------------------------------- #
 
+
+def _get_base_path(request: web.Request) -> str:
+    """Extract the Ingress path from the request headers."""
+    return request.headers.get("X-Ingress-Path", "")
+
+
 async def handle_health(request: web.Request) -> web.Response:
     """Watchdog endpoint — must stay fast and side-effect-free."""
     return web.json_response({"status": "ok"})
@@ -97,18 +105,31 @@ async def handle_health(request: web.Request) -> web.Response:
 
 async def handle_index(request: web.Request) -> web.Response:
     config: dict = request.app["config"]
+    base_path = _get_base_path(request)
+
     if not _is_authenticated(config, request):
-        return web.FileResponse(TEMPLATES_DIR / "login.html")
-    return web.FileResponse(TEMPLATES_DIR / "index.html")
+        text = (TEMPLATES_DIR / "login.html").read_text()
+        text = text.replace('href="/static/', f'href="{base_path}/static/')
+        text = text.replace('action="/login"', f'action="{base_path}/login"')
+        return web.Response(text=text, content_type="text/html")
+
+    text = (TEMPLATES_DIR / "index.html").read_text()
+    text = text.replace('href="/static/', f'href="{base_path}/static/')
+    text = text.replace('action="/logout"', f'action="{base_path}/logout"')
+    text = text.replace('"/upload"', f'"{base_path}/upload"')
+    text = text.replace('"/photos"', f'"{base_path}/photos"')
+    text = text.replace("`/photos/", f"`{base_path}/photos/")
+    return web.Response(text=text, content_type="text/html")
 
 
 async def handle_login(request: web.Request) -> web.Response:
     config: dict = request.app["config"]
+    base_path = _get_base_path(request)
     data = await request.post()
     entered: str = data.get("password", "")
 
     if entered == config["password"]:
-        response = web.HTTPFound("/")
+        response = web.HTTPFound(f"{base_path}/")
         response.set_cookie(
             "pfd_session",
             _session_value(config["password"]),
@@ -121,11 +142,12 @@ async def handle_login(request: web.Request) -> web.Response:
 
     logger.warning("Failed login attempt from %s", request.remote)
     # Redirect back to login page with an error flag in the query string
-    return web.HTTPFound("/?error=wrong_password")
+    return web.HTTPFound(f"{base_path}/?error=wrong_password")
 
 
 async def handle_logout(request: web.Request) -> web.Response:
-    response = web.HTTPFound("/")
+    base_path = _get_base_path(request)
+    response = web.HTTPFound(f"{base_path}/")
     response.del_cookie("pfd_session")
     return response
 
@@ -186,7 +208,9 @@ async def handle_upload(request: web.Request) -> web.Response:
     except OSError as exc:
         logger.error("I/O error writing %s: %s", dest_path, exc)
         dest_path.unlink(missing_ok=True)
-        raise web.HTTPInternalServerError(reason="Could not save file to disk.") from exc
+        raise web.HTTPInternalServerError(
+            reason="Could not save file to disk."
+        ) from exc
 
     logger.info(
         "Upload OK: %s → %s (%d bytes from %s)",
@@ -231,7 +255,9 @@ async def handle_list_photos(request: web.Request) -> web.Response:
         )
     except OSError as exc:
         logger.error("Cannot list photos in %s: %s", media_path, exc)
-        raise web.HTTPInternalServerError(reason="Could not read media directory.") from exc
+        raise web.HTTPInternalServerError(
+            reason="Could not read media directory."
+        ) from exc
 
     return web.json_response({"photos": photos, "total": len(photos)})
 

@@ -1,5 +1,5 @@
 name: "Photo Frame Drop"
-version: "2.0.3"
+version: "2.0.4"
 slug: photo_frame_drop
 description: "Drag & drop photos into your HA /media folder from anywhere, with a gallery and password protection."
 url: "https://github.com/GwiezdnySzeryf/Photo-Frame-Drop"
