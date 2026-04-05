@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2026-04-05
+### Fixed
+- Fixed an `IndentationError` in `main.py` caused by a malformed find-and-replace edit that duplicated endpoints. Application now starts correctly without crash loops.
+
 ## [1.0.8] - 2026-04-05
 ### Fixed
 - Fixed Home Assistant Ingress URL routing. Ingress accesses the app through a dynamic path (`/api/hassio_ingress/xxx`), which caused infinite redirect loops (`302 Found`). Added `X-Ingress-Path` handling to the backend and injected `base_path` to all HTML templates and API endpoints.
