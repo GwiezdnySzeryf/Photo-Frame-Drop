@@ -4,4 +4,4 @@ python-multipart
 jinja2
 requests
 slowapi
-filetype
+python-magic

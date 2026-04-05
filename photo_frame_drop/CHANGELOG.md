@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-04-05
+### Fixed
+- Updated base image to `ghcr.io/hassio-addons/base-python:18.0.0`
+- Reverted to `python-magic` and fixed Alpine C-dependencies by adding `file` package alongside `libmagic`.
+- Optimized Dockerfile to use `pip` alias from newer base image.
+
 ## [1.0.2] - 2026-04-05
 ### Fixed
 - Fixed Docker image build errors on ARM architectures by removing `pillow` dependency (not used for core functionality).
