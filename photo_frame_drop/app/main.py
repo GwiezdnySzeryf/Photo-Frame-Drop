@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import secrets
 import requests
 import json
-import magic
+import filetype
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -182,12 +182,17 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...)):
         if file_size > MAX_FILE_SIZE:
             continue  # Skip files that are too large
 
-        # MIME type validation using python-magic
+        # MIME type validation using filetype
         file_content = await file.read(2048)  # Read a chunk to detect mime type
         file.file.seek(0)  # Reset file pointer
 
-        mime_type = magic.from_buffer(file_content, mime=True)
-        if mime_type not in ["image/jpeg", "image/png", "image/webp", "image/gif"]:
+        kind = filetype.guess(file_content)
+        if kind is None or kind.mime not in [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif",
+        ]:
             continue
 
         # Add timestamp to avoid overwriting

@@ -1,9 +1,6 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base-python:13.1.2
 FROM $BUILD_FROM
 
-# Install dependencies required by python-magic
-RUN apk add --no-cache libmagic
-
 # Install requirements
 COPY app/requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
