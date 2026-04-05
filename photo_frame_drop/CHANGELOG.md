@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-04-05
+### Fixed
+- Fixed build error caused by Supervisor overriding the `BUILD_FROM` argument. Explicitly installed `python3` and `py3-pip` in the Dockerfile.
+- Added `--break-system-packages` to `pip install` to support newer Alpine versions (PEP 668).
+
 ## [1.0.3] - 2026-04-05
 ### Fixed
 - Updated base image to `ghcr.io/hassio-addons/base-python:18.0.0`

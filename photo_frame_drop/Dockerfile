@@ -1,12 +1,16 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base-python:18.0.0
+ARG BUILD_FROM
 FROM $BUILD_FROM
 
-# Install system dependencies for python-magic
-RUN apk add --no-cache libmagic file
+# Install Python and system dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    libmagic \
+    file
 
 # Copy requirements and install Python dependencies
 COPY app/requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 
 # Copy application files
 COPY run.sh /
