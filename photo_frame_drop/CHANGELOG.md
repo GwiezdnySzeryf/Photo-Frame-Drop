@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.5] - 2026-04-05
+### Changed
+- Re-exposed `8099/tcp` in the `ports` configuration to allow direct, independent network access (e.g. for reverse proxy or external sharing) while still maintaining the internal HA Ingress functionality.
+
 ## [2.0.4] - 2026-04-05
 ### Fixed
 - Fixed broken UI and `524 A timeout occurred` Cloudflare error when using HA Ingress. Ingress accesses the app through a dynamic path (`/api/hassio_ingress/xxx`), causing absolute HTML paths to route to the main HA domain and break out of the addon context. Handled `X-Ingress-Path` internally to serve properly routed frontend assets and redirects.
