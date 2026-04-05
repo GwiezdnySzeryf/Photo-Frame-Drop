@@ -9,24 +9,38 @@ from datetime import datetime, timedelta
 import secrets
 import requests
 import json
+import magic
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi.responses import FileResponse
 
+# Setup rate limiter
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="Photo Frame Drop API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Mount static files and templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Configuration from HA Add-on options
-ACCESS_KEY = os.environ.get("ACCESS_KEY", "admin")
+ACCESS_KEY = os.environ.get("ACCESS_KEY", "")
 UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", "digital_frame")
+
+# Validate upload folder to prevent path traversal
+if ".." in UPLOAD_FOLDER or UPLOAD_FOLDER.startswith("/"):
+    UPLOAD_FOLDER = "digital_frame"
+
 NOTIFY_ON_UPLOAD = os.environ.get("NOTIFY_ON_UPLOAD", "true").lower() == "true"
 MEDIA_PATH = f"/media/{UPLOAD_FOLDER}"
 SUPERVISOR_TOKEN = os.environ.get("SUPERVISOR_TOKEN")
 
-# Simple session management (in-memory for simplicity in this addon)
-# In a real production app, use Redis or a proper session store, but for a simple HA addon this is often enough
+# Simple session management
 sessions = {}
 SESSION_EXPIRY = timedelta(days=7)
+MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
 
 
 def create_session():
@@ -36,6 +50,9 @@ def create_session():
 
 
 def is_authenticated(request: Request):
+    if not ACCESS_KEY:
+        return True  # If no access key is set, authentication is bypassed
+
     session_token = request.cookies.get("session_token")
     if not session_token or session_token not in sessions:
         return False
@@ -86,11 +103,12 @@ async def read_root(request: Request):
 
 
 @app.post("/api/login")
+@limiter.limit("5/minute")
 async def login(request: Request):
     form_data = await request.form()
     key = form_data.get("access_key")
 
-    if key == ACCESS_KEY:
+    if key == ACCESS_KEY or not ACCESS_KEY:
         session_token = create_session()
         response = JSONResponse(content={"success": True})
         response.set_cookie(
@@ -156,8 +174,20 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...)):
         if not file.filename:
             continue
 
-        file_ext = os.path.splitext(file.filename)[1].lower()
-        if file_ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+        # File size validation (needs to read content to determine size accurately, or limit request body size globally)
+        file.file.seek(0, os.SEEK_END)
+        file_size = file.file.tell()
+        file.file.seek(0)
+
+        if file_size > MAX_FILE_SIZE:
+            continue  # Skip files that are too large
+
+        # MIME type validation using python-magic
+        file_content = await file.read(2048)  # Read a chunk to detect mime type
+        file.file.seek(0)  # Reset file pointer
+
+        mime_type = magic.from_buffer(file_content, mime=True)
+        if mime_type not in ["image/jpeg", "image/png", "image/webp", "image/gif"]:
             continue
 
         # Add timestamp to avoid overwriting
@@ -205,8 +235,6 @@ async def delete_file(request: Request, filename: str):
 async def get_image(request: Request, filename: str):
     if not is_authenticated(request):
         raise HTTPException(status_code=401, detail="Unauthorized")
-
-    from fastapi.responses import FileResponse
 
     file_path = os.path.join(MEDIA_PATH, filename)
 

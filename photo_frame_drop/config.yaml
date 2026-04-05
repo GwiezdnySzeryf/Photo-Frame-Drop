@@ -12,16 +12,18 @@ arch:
 map:
   - media:rw
 options:
-  access_key: "sekretne_haslo"
+  access_key: ""
   upload_folder: "digital_frame"
   notify_on_upload: true
 schema:
-  access_key: str
-  upload_folder: str
+  access_key: password
+  upload_folder: match(^[\w\-\.]+$)
   notify_on_upload: bool
 ports:
   8000/tcp: 8000
 ports_description:
   8000/tcp: "Interfejs WWW (dostępny z zewnątrz po wystawieniu portu)"
-homeassistant_api: true
-hassio_api: true
+ingress: true
+ingress_port: 8000
+panel_icon: mdi:image-multiple
+panel_title: "Cyfrowa Ramka"
