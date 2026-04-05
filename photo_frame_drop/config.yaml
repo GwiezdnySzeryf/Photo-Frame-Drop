@@ -1,6 +1,6 @@
 name: "Photo Frame Drop"
 description: "Aplikacja WWW do przesyłania i zarządzania zdjęciami na cyfrowej ramce."
-version: "1.0.7"
+version: "1.0.8"
 slug: "photo_frame_drop"
 init: false
 arch:

@@ -99,11 +99,11 @@
 <p class="text-xs text-on-surface-variant font-medium mt-1">Twój osobisty kurator</p>
 </div>
 <nav class="flex-1 px-4 space-y-2">
-<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#00213c] transition-all rounded-lg font-manrope text-sm font-medium" href="/gallery">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#00213c] transition-all rounded-lg font-manrope text-sm font-medium" href="{{ base_path }}/gallery">
 <span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
                 Galeria
             </a>
-<a class="flex items-center gap-3 px-4 py-3 bg-[#001b33] text-[#afc9ea] rounded-lg font-manrope text-sm font-medium" href="/upload">
+<a class="flex items-center gap-3 px-4 py-3 bg-[#001b33] text-[#afc9ea] rounded-lg font-manrope text-sm font-medium" href="{{ base_path }}/upload">
 <span class="material-symbols-outlined" data-icon="add_a_photo">add_a_photo</span>
                 Dodaj zdjęcia
             </a>
@@ -116,8 +116,8 @@
 <div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
 <div class="md:hidden text-2xl font-bold tracking-tighter text-[#afc9ea]">Photo Frame Drop</div>
 <div class="hidden md:flex items-center gap-8">
-<a class="text-slate-400 hover:text-white transition-colors duration-300" href="/gallery">Galeria</a>
-<a class="text-[#afc9ea] border-b-2 border-[#afc9ea] pb-1 hover:text-white transition-colors duration-300" href="/upload">Dodaj zdjęcia</a>
+<a class="text-slate-400 hover:text-white transition-colors duration-300" href="{{ base_path }}/gallery">Galeria</a>
+<a class="text-[#afc9ea] border-b-2 border-[#afc9ea] pb-1 hover:text-white transition-colors duration-300" href="{{ base_path }}/upload">Dodaj zdjęcia</a>
 </div>
 </div>
 </header>
@@ -173,11 +173,11 @@
 
 <!-- Bottom Navigation Mobile -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#001428] px-6 py-4 flex justify-around items-center z-20 border-t border-outline-variant/10">
-<a class="flex flex-col items-center gap-1 text-slate-400" href="/gallery">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="{{ base_path }}/gallery">
 <span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
 <span class="text-[10px] font-label">Galeria</span>
 </a>
-<a class="flex flex-col items-center gap-1 text-[#afc9ea]" href="/upload">
+<a class="flex flex-col items-center gap-1 text-[#afc9ea]" href="{{ base_path }}/upload">
 <span class="material-symbols-outlined" data-icon="add_a_photo" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
 <span class="text-[10px] font-label">Dodaj</span>
 </a>
@@ -254,7 +254,7 @@
         
         xhr.addEventListener('load', function(e) {
             if (xhr.status === 200) {
-                window.location.href = '/success';
+                window.location.href = '{{ base_path }}/success';
             } else {
                 alert('Wystąpił błąd podczas przesyłania plików.');
                 uploadProgress.classList.add('hidden');
@@ -266,7 +266,7 @@
             uploadProgress.classList.add('hidden');
         });
         
-        xhr.open('POST', '/api/upload_files', true);
+        xhr.open('POST', '{{ base_path }}/api/upload_files', true);
         xhr.send(formData);
     }
 </script>

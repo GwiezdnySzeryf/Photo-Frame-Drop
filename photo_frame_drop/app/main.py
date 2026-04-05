@@ -95,12 +95,15 @@ def notify_ha(message: str):
         return False
 
 
+def get_base_path(request: Request):
+    return request.headers.get("X-Ingress-Path", "")
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
+    base_path = get_base_path(request)
     if is_authenticated(request):
-        return RedirectResponse(url="/upload", status_code=status.HTTP_302_FOUND)
-    return templates.TemplateResponse("login.html", {"request": request})
-
+        return RedirectResponse(url=f"{base_path}/upload", status_code=status.HTTP_302_FOUND)
+    return templates.TemplateResponse("login.html", {"request": request, "base_path": base_path})
 
 @app.post("/api/login")
 @limiter.limit("5/minute")
@@ -118,6 +121,48 @@ async def login(request: Request):
             max_age=int(SESSION_EXPIRY.total_seconds()),
             samesite="lax",
         )
+        return response
+    else:
+        return JSONResponse(
+            content={"success": False, "message": "Nieprawidłowy klucz"},
+            status_code=401,
+        )
+
+@app.get("/upload", response_class=HTMLResponse)
+async def upload_page(request: Request):
+    base_path = get_base_path(request)
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{base_path}/", status_code=status.HTTP_302_FOUND)
+    return templates.TemplateResponse("upload.html", {"request": request, "base_path": base_path})
+
+@app.get("/success", response_class=HTMLResponse)
+async def success_page(request: Request):
+    base_path = get_base_path(request)
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{base_path}/", status_code=status.HTTP_302_FOUND)
+    return templates.TemplateResponse("success.html", {"request": request, "base_path": base_path})
+
+@app.get("/gallery", response_class=HTMLResponse)
+async def gallery_page(request: Request):
+    base_path = get_base_path(request)
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{base_path}/", status_code=status.HTTP_302_FOUND)
+
+    # List images
+    images = []
+    if os.path.exists(MEDIA_PATH):
+        for filename in os.listdir(MEDIA_PATH):
+            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif")):
+                images.append(filename)
+
+    # Sort by modification time, newest first
+    images.sort(
+        key=lambda x: os.path.getmtime(os.path.join(MEDIA_PATH, x)), reverse=True
+    )
+
+    return templates.TemplateResponse(
+        "gallery.html", {"request": request, "images": images, "base_path": base_path}
+    )
         return response
     else:
         return JSONResponse(

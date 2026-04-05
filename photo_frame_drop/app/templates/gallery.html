@@ -50,11 +50,11 @@
 <p class="text-xs text-on-surface-variant font-medium mt-1">Twój osobisty kurator</p>
 </div>
 <nav class="flex-1 px-4 space-y-2">
-<a class="flex items-center gap-3 px-4 py-3 bg-[#001b33] text-[#afc9ea] rounded-lg font-manrope text-sm font-medium" href="/gallery">
+<a class="flex items-center gap-3 px-4 py-3 bg-[#001b33] text-[#afc9ea] rounded-lg font-manrope text-sm font-medium" href="{{ base_path }}/gallery">
 <span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
                 Galeria
             </a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#00213c] transition-all rounded-lg font-manrope text-sm font-medium" href="/upload">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-[#00213c] transition-all rounded-lg font-manrope text-sm font-medium" href="{{ base_path }}/upload">
 <span class="material-symbols-outlined" data-icon="add_a_photo">add_a_photo</span>
                 Dodaj zdjęcia
             </a>
@@ -67,8 +67,8 @@
 <div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
 <div class="md:hidden text-2xl font-bold tracking-tighter text-[#afc9ea]">Photo Frame Drop</div>
 <div class="hidden md:flex items-center gap-8">
-<a class="text-[#afc9ea] border-b-2 border-[#afc9ea] pb-1 hover:text-white transition-colors duration-300" href="/gallery">Galeria</a>
-<a class="text-slate-400 hover:text-white transition-colors duration-300" href="/upload">Dodaj zdjęcia</a>
+<a class="text-[#afc9ea] border-b-2 border-[#afc9ea] pb-1 hover:text-white transition-colors duration-300" href="{{ base_path }}/gallery">Galeria</a>
+<a class="text-slate-400 hover:text-white transition-colors duration-300" href="{{ base_path }}/upload">Dodaj zdjęcia</a>
 </div>
 </div>
 </header>
@@ -92,7 +92,7 @@
 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for image in images %}
     <div class="relative group rounded-xl overflow-hidden bg-surface-container-low aspect-square border border-outline-variant/10">
-        <img src="/api/image/{{ image }}" alt="{{ image }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+        <img src="{{ base_path }}/api/image/{{ image }}" alt="{{ image }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
         
         <!-- Hover Overlay -->
         <div class="absolute inset-0 bg-gradient-to-t from-surface-container-highest/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
@@ -113,7 +113,7 @@
     </div>
     <h3 class="text-xl font-manrope font-bold mb-2">Galeria jest pusta</h3>
     <p class="text-on-surface-variant mb-8 max-w-md">Nie masz jeszcze żadnych zdjęć w swojej cyfrowej ramce.</p>
-    <a href="/upload" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-manrope font-bold rounded-full hover:opacity-90 transition-all">
+    <a href="{{ base_path }}/upload" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-manrope font-bold rounded-full hover:opacity-90 transition-all">
         Dodaj pierwsze zdjęcia
     </a>
 </section>
@@ -123,11 +123,11 @@
 
 <!-- Bottom Navigation Mobile -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#001428] px-6 py-4 flex justify-around items-center z-20 border-t border-outline-variant/10">
-<a class="flex flex-col items-center gap-1 text-[#afc9ea]" href="/gallery">
+<a class="flex flex-col items-center gap-1 text-[#afc9ea]" href="{{ base_path }}/gallery">
 <span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
 <span class="text-[10px] font-label">Galeria</span>
 </a>
-<a class="flex flex-col items-center gap-1 text-slate-400" href="/upload">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="{{ base_path }}/upload">
 <span class="material-symbols-outlined" data-icon="add_a_photo">add_a_photo</span>
 <span class="text-[10px] font-label">Dodaj</span>
 </a>
