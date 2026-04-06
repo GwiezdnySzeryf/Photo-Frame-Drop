@@ -5,6 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.16] - 2026-04-06
+### Fixed
+- Fixed bug causing an empty gallery and upload errors when using Home Assistant Ingress due to conflicting URL parsing in the Python backend.
+- Added a 2-second debounce to the Home Assistant notification system so that uploading multiple photos at once (e.g. 50 files) sends only a single summary notification instead of spamming 50 separate alerts.
+
 ## [2.0.15] - 2026-04-06
 ### Fixed
 - Fixed Home Assistant upload notifications not triggering (Error 401 Unauthorized in logs). Restored the `homeassistant_api: true` permission in `config.yaml` to allow the add-on's `SUPERVISOR_TOKEN` to successfully proxy requests to HA Core APIs like `persistent_notification.create`.

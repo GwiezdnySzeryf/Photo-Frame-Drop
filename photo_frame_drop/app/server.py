@@ -45,6 +45,10 @@ STATIC_DIR = Path(__file__).parent / "static"
 # Rate Limiting Store
 _failed_logins: dict[str, list[float]] = defaultdict(list)
 
+# Notification Debounce Store
+_notify_files: list[str] = []
+_notify_task: asyncio.Task | None = None
+
 # ---------------------------------------------------------------------------- #
 # Helpers                                                                       #
 # ---------------------------------------------------------------------------- #
@@ -142,8 +146,6 @@ async def handle_index(request: web.Request) -> web.Response:
 
     if not _is_authenticated(config, request):
         text = (TEMPLATES_DIR / "login.html").read_text()
-        text = text.replace('href="/static/', f'href="{base_path}/static/')
-        text = text.replace('action="/login"', f'action="{base_path}/login"')
         text = text.replace("{{ base_path }}", base_path)
         text = text.replace(
             "{{ login_description }}", config.get("login_description", "")
@@ -151,10 +153,6 @@ async def handle_index(request: web.Request) -> web.Response:
         return web.Response(text=text, content_type="text/html")
 
     text = (TEMPLATES_DIR / "index.html").read_text()
-    text = text.replace('href="/static/', f'href="{base_path}/static/')
-    text = text.replace('"/upload"', f'"{base_path}/upload"')
-    text = text.replace('"/photos"', f'"{base_path}/photos"')
-    text = text.replace("`/photos/", f"`{base_path}/photos/")
     text = text.replace("{{ base_path }}", base_path)
     return web.Response(text=text, content_type="text/html")
 
@@ -198,6 +196,24 @@ async def handle_logout(request: web.Request) -> web.Response:
     response = web.json_response({"status": "logged_out"})
     response.del_cookie("pfd_session")
     return response
+
+
+async def _send_debounced_notification(token: str, message: str) -> None:
+    try:
+        await asyncio.sleep(2.0)
+    except asyncio.CancelledError:
+        return
+
+    count = len(_notify_files)
+    if count == 1:
+        msg = f"{message} [{_notify_files[0]}]"
+    elif count > 1:
+        msg = f"{message} ({count} photos)"
+    else:
+        return
+
+    _notify_files.clear()
+    await send_ha_notification(token=token, message=msg)
 
 
 async def handle_upload(request: web.Request) -> web.Response:
@@ -269,9 +285,14 @@ async def handle_upload(request: web.Request) -> web.Response:
     )
 
     if config["notify_on_upload"] and config["supervisor_token"]:
-        await send_ha_notification(
-            token=config["supervisor_token"],
-            message=f"{config['notify_message']} [{dest_name}]",
+        global _notify_task
+        _notify_files.append(dest_name)
+        if _notify_task and not _notify_task.done():
+            _notify_task.cancel()
+        _notify_task = asyncio.create_task(
+            _send_debounced_notification(
+                config["supervisor_token"], config["notify_message"]
+            )
         )
 
     return web.json_response(
