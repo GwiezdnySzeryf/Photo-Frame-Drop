@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.14] - 2026-04-05
+### Added
+- Added an optional `login_description` field to the add-on configuration. This text will be displayed on the login page just below the "Photo Frame Drop" title, allowing administrators to provide custom instructions.
+
 ## [2.0.13] - 2026-04-05
 ### Fixed
 - Re-applied the backend thumbnail generation endpoint (`/thumb/{filename}`) and logic using `Pillow` which was accidentally rolled back during a previous merge, restoring actual images to the gallery thumbnails.
