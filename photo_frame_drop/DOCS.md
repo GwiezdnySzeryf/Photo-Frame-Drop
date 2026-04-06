@@ -48,6 +48,9 @@ It does not use WebSockets or polling — it is a stateless HTTP server.
    ```
    https://github.com/GwiezdnySzeryf/Photo-Frame-Drop
    ```
+[![Open your Home Assistant instance and show the add app repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGwiezdnySzeryf%2FPhoto-Frame-Drop)
+
+   
 3. Refresh the page, find **Photo Frame Drop**, click **Install**.
 4. Go to the **Configuration** tab, set your password and target folder.
 5. Click **Start**.
