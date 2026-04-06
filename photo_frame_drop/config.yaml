@@ -32,6 +32,7 @@ options:
   allowed_extensions: "jpg,jpeg,png,gif,webp,bmp"
   notify_on_upload: false
   notify_message: "New photo added to the frame!"
+  login_description: ""
 
 schema:
   target_folder: str
@@ -40,6 +41,7 @@ schema:
   allowed_extensions: str
   notify_on_upload: bool
   notify_message: str
+  login_description: str?
 
 watchdog: "http://[HOST]:[PORT:8099]/health"
 timeout: 10

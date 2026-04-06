@@ -29,6 +29,7 @@ logger = logging.getLogger("photo_frame_drop")
 # Configuration loading                                                         #
 # ---------------------------------------------------------------------------- #
 
+
 def load_config() -> dict:
     """Load and validate all configuration from environment variables.
 
@@ -54,9 +55,7 @@ def load_config() -> dict:
     # without leading dots: {"jpg", "jpeg", "png", ...}
     raw_ext = os.environ["PHOTO_FRAME_EXTENSIONS"]
     allowed_extensions: frozenset[str] = frozenset(
-        ext.strip().lower().lstrip(".")
-        for ext in raw_ext.split(",")
-        if ext.strip()
+        ext.strip().lower().lstrip(".") for ext in raw_ext.split(",") if ext.strip()
     )
     if not allowed_extensions:
         logger.error(
@@ -80,8 +79,12 @@ def load_config() -> dict:
         "password": os.environ["PHOTO_FRAME_PASSWORD"],
         "max_bytes": max_mb * 1024 * 1024,
         "allowed_extensions": allowed_extensions,
-        "notify_on_upload": os.environ.get("PHOTO_FRAME_NOTIFY", "false").lower() == "true",
-        "notify_message": os.environ.get("PHOTO_FRAME_NOTIFY_MSG", "New photo uploaded!"),
+        "notify_on_upload": os.environ.get("PHOTO_FRAME_NOTIFY", "false").lower()
+        == "true",
+        "notify_message": os.environ.get(
+            "PHOTO_FRAME_NOTIFY_MSG", "New photo uploaded!"
+        ),
+        "login_description": os.environ.get("PHOTO_FRAME_LOGIN_DESC", ""),
         "supervisor_token": os.environ.get("PHOTO_FRAME_SUPERVISOR_TOKEN", ""),
         "port": port,
     }
@@ -91,6 +94,7 @@ def load_config() -> dict:
 # Main                                                                          #
 # ---------------------------------------------------------------------------- #
 
+
 async def main() -> None:
     config = load_config()
 
@@ -98,8 +102,13 @@ async def main() -> None:
     logger.info("  Port            : %d", config["port"])
     logger.info("  Media path      : %s", config["media_path"])
     logger.info("  Max upload size : %d MB", config["max_bytes"] // (1024 * 1024))
-    logger.info("  Allowed exts    : %s", ", ".join(sorted(config["allowed_extensions"])))
-    logger.info("  Notifications   : %s", "enabled" if config["notify_on_upload"] else "disabled")
+    logger.info(
+        "  Allowed exts    : %s", ", ".join(sorted(config["allowed_extensions"]))
+    )
+    logger.info(
+        "  Notifications   : %s",
+        "enabled" if config["notify_on_upload"] else "disabled",
+    )
 
     from aiohttp import web
 

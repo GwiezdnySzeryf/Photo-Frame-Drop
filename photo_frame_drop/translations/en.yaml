@@ -25,6 +25,9 @@ configuration:
   notify_message:
     name: Notification Message
     description: Text of the HA notification sent after each successful upload.
+  login_description:
+    name: Login Description
+    description: Optional text to display on the login screen below the title.
 
 network:
   8099/tcp: Photo Frame Drop web interface

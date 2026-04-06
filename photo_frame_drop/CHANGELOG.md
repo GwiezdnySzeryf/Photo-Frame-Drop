@@ -9,6 +9,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Re-applied the backend thumbnail generation endpoint (`/thumb/{filename}`) and logic using `Pillow` which was accidentally rolled back during a previous merge, restoring actual images to the gallery thumbnails.
 
+## [2.0.13] - 2026-04-05
+### Added
+- Added an optional `login_description` field to the add-on configuration. This text will be displayed on the login page just below the "Photo Frame Drop" title, allowing administrators to provide custom instructions (e.g., "Ask Tomek for the password").
+
 ## [2.0.12] - 2026-04-05
 ### Fixed
 - Properly committed the HTML templates that implement the new EN/PL language toggle, the functional Sign out button, and the lightweight image thumbnails. A previous tool error prevented these UI changes from reaching the repository.

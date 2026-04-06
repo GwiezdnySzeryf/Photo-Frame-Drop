@@ -145,6 +145,9 @@ async def handle_index(request: web.Request) -> web.Response:
         text = text.replace('href="/static/', f'href="{base_path}/static/')
         text = text.replace('action="/login"', f'action="{base_path}/login"')
         text = text.replace("{{ base_path }}", base_path)
+        text = text.replace(
+            "{{ login_description }}", config.get("login_description", "")
+        )
         return web.Response(text=text, content_type="text/html")
 
     text = (TEMPLATES_DIR / "index.html").read_text()
