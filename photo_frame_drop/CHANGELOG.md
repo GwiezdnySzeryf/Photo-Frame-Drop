@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.9] - 2026-04-05
+### Fixed
+- Fixed massive, unconstrained image previews when accessed via Home Assistant Ingress. Home Assistant heavily caches static files, causing the browser to load an older version of the CSS file without the new thumbnail constraints. Added a version query parameter (`?v=2.0.9`) to the `style.css` stylesheet link in Python backend to definitively bust the browser cache.
+
 ## [2.0.8] - 2026-04-05
 ### Fixed
 - Fixed broken layout and raw template string output (`${escapeHtml(photo.name)}`) in the photo gallery caused by escaped backslashes in JavaScript template literals.
