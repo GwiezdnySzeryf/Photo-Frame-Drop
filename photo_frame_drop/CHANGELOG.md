@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.15] - 2026-04-06
+### Fixed
+- Fixed Home Assistant upload notifications not triggering (Error 401 Unauthorized in logs). Restored the `homeassistant_api: true` permission in `config.yaml` to allow the add-on's `SUPERVISOR_TOKEN` to successfully proxy requests to HA Core APIs like `persistent_notification.create`.
+
 ## [2.0.14] - 2026-04-05
 ### Added
 - Added an optional `login_description` field to the add-on configuration. This text will be displayed on the login page just below the "Photo Frame Drop" title, allowing administrators to provide custom instructions.
