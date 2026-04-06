@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.10] - 2026-04-05
+### Fixed
+- Fixed the "Sign out" button completely. Ingress pathing rules caused the `fetch("/logout")` Javascript call to break out of the addon and crash to a generic Cloudflare 524 Timeout error because it lacked the `X-Ingress-Path` prefix.
+
 ## [2.0.9] - 2026-04-05
 ### Fixed
 - Fixed massive, unconstrained image previews when accessed via Home Assistant Ingress. Home Assistant heavily caches static files, causing the browser to load an older version of the CSS file without the new thumbnail constraints. Added a version query parameter (`?v=2.0.9`) to the `style.css` stylesheet link in Python backend to definitively bust the browser cache.
