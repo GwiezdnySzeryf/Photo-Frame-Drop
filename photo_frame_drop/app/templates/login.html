@@ -1,36 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop — Login</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.0" />
 </head>
 <body class="login-page">
   <div class="login-card">
-    <div class="login-icon">🖼️</div>
-    <h1>Photo Frame Drop</h1>
-
-    <div id="error-banner" class="error-banner" style="display:none">
-      Incorrect password. Try again.
+    <div style="display:flex; justify-content:flex-end">
+      <button type="button" class="btn-ghost" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" id="btn-lang" aria-label="Toggle language">EN</button>
     </div>
+    
+    <div class="login-icon">🖼️</div>
+    <h1 id="t-title">Photo Frame Drop</h1>
 
-    <form method="POST" action="/login">
-      <label for="password">Password</label>
+    <div id="error-banner" class="error-banner" style="display:none"></div>
+
+    <form method="POST" action="{{ base_path }}/login">
+      <label for="password" id="t-password">Hasło</label>
       <input
         type="password"
         id="password"
         name="password"
-        placeholder="Enter password"
+        placeholder="Wpisz hasło"
         autocomplete="current-password"
         required
         autofocus
       />
-      <button type="submit">Sign in</button>
+      <button type="submit" id="t-submit">Zaloguj się</button>
     </form>
   </div>
 
   <script>
+    "use strict";
+
+    const I18N = {
+      pl: {
+        title: "Photo Frame Drop",
+        password: "Hasło",
+        submit: "Zaloguj się",
+        placeholder: "Wpisz hasło",
+        error: "Nieprawidłowe hasło. Spróbuj ponownie."
+      },
+      en: {
+        title: "Photo Frame Drop",
+        password: "Password",
+        submit: "Sign in",
+        placeholder: "Enter password",
+        error: "Incorrect password. Try again."
+      }
+    };
+
+    let lang = localStorage.getItem("pfd_lang") || "pl";
+
+    function applyTranslations() {
+      document.documentElement.lang = lang;
+      const t = I18N[lang];
+      document.getElementById("t-title").textContent = t.title;
+      document.getElementById("t-password").textContent = t.password;
+      document.getElementById("password").placeholder = t.placeholder;
+      document.getElementById("t-submit").textContent = t.submit;
+      document.getElementById("error-banner").textContent = t.error;
+      document.getElementById("btn-lang").textContent = lang === "pl" ? "EN" : "PL";
+    }
+
+    document.getElementById("btn-lang").addEventListener("click", () => {
+      lang = lang === "pl" ? "en" : "pl";
+      localStorage.setItem("pfd_lang", lang);
+      applyTranslations();
+    });
+
+    applyTranslations();
+
     // Show error banner if redirected back with ?error=...
     if (new URLSearchParams(window.location.search).get("error")) {
       document.getElementById("error-banner").style.display = "block";

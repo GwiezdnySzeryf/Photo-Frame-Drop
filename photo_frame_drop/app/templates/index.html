@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.0" />
 </head>
 <body>
   <!-- ─── Header ─────────────────────────────────────────────────── -->
   <header>
     <span class="header-icon">🖼️</span>
-    <h1>Photo Frame Drop</h1>
-    <button type="button" class="btn-ghost" id="btn-logout" style="margin-left:auto">Sign out</button>
+    <h1 id="t-title">Photo Frame Drop</h1>
+    <div style="margin-left:auto; display:flex; gap:0.5rem">
+      <button type="button" class="btn-ghost" id="btn-lang" aria-label="Toggle language">EN</button>
+      <button type="button" class="btn-ghost" id="btn-logout">Wyloguj</button>
+    </div>
   </header>
 
   <!-- ─── Upload zone ─────────────────────────────────────────────── -->
@@ -26,8 +29,8 @@
       >
         <div class="drop-zone-inner">
           <span class="drop-icon">📷</span>
-          <p class="drop-label">Drag &amp; drop photos here</p>
-          <p class="drop-sub">or click to choose files</p>
+          <p class="drop-label" id="t-drag">Przeciągnij i upuść zdjęcia tutaj</p>
+          <p class="drop-sub" id="t-or">lub kliknij, aby wybrać pliki</p>
           <input
             type="file"
             id="file-input"
@@ -45,11 +48,11 @@
     <!-- ─── Gallery ─────────────────────────────────────────────────── -->
     <section class="gallery-section">
       <div class="gallery-header">
-        <h2>Uploaded Photos</h2>
+        <h2 id="t-gallery-title">Wgrane zdjęcia</h2>
         <span id="photo-count" class="photo-count"></span>
       </div>
       <div id="gallery" class="gallery">
-        <p class="gallery-empty" id="gallery-empty">No photos yet.</p>
+        <p class="gallery-empty" id="t-empty">Brak zdjęć.</p>
       </div>
     </section>
   </main>
@@ -58,8 +61,74 @@
     "use strict";
     window.basePath = "{{ base_path }}";
 
-    // ── Upload logic ─────────────────────────────────────────────────
+    // ── i18n logic ───────────────────────────────────────────────────
+    const I18N = {
+      pl: {
+        title: "Photo Frame Drop",
+        logout: "Wyloguj",
+        drag: "Przeciągnij i upuść zdjęcia tutaj",
+        or: "lub kliknij, aby wybrać pliki",
+        gallery_title: "Wgrane zdjęcia",
+        empty: "Brak zdjęć.",
+        uploading: "Wgrywanie…",
+        done: "✓ Gotowe",
+        failed: "✗ Błąd",
+        network_error: "✗ Błąd sieci",
+        photo_count: (n) => n === 1 ? `1 zdjęcie` : (n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20)) ? `${n} zdjęcia` : `${n} zdjęć`,
+        confirm_delete: (name) => `Czy na pewno usunąć "${name}"?`,
+      },
+      en: {
+        title: "Photo Frame Drop",
+        logout: "Sign out",
+        drag: "Drag & drop photos here",
+        or: "or click to choose files",
+        gallery_title: "Uploaded Photos",
+        empty: "No photos yet.",
+        uploading: "Uploading…",
+        done: "✓ Done",
+        failed: "✗ Failed",
+        network_error: "✗ Network error",
+        photo_count: (n) => n === 1 ? `1 photo` : `${n} photos`,
+        confirm_delete: (name) => `Delete "${name}"?`,
+      }
+    };
 
+    let lang = localStorage.getItem("pfd_lang") || "pl";
+
+    function applyTranslations() {
+      document.documentElement.lang = lang;
+      const t = I18N[lang];
+      document.getElementById("t-title").textContent = t.title;
+      document.getElementById("btn-logout").textContent = t.logout;
+      document.getElementById("t-drag").textContent = t.drag;
+      document.getElementById("t-or").textContent = t.or;
+      document.getElementById("t-gallery-title").textContent = t.gallery_title;
+      document.getElementById("t-empty").textContent = t.empty;
+      document.getElementById("btn-lang").textContent = lang === "pl" ? "EN" : "PL";
+      
+      // Update existing list/status texts
+      refreshGalleryCount();
+    }
+
+    document.getElementById("btn-lang").addEventListener("click", () => {
+      lang = lang === "pl" ? "en" : "pl";
+      localStorage.setItem("pfd_lang", lang);
+      applyTranslations();
+    });
+
+    // ── Logout logic ─────────────────────────────────────────────────
+    document.getElementById("btn-logout").addEventListener("click", async () => {
+      try {
+        await fetch(window.basePath + "/logout", { 
+          method: "POST", 
+          headers: { "X-Requested-With": "XMLHttpRequest" }
+        });
+      } finally {
+        window.location.reload();
+      }
+    });
+
+    // ── Upload logic ─────────────────────────────────────────────────
     const dropZone   = document.getElementById("drop-zone");
     const fileInput  = document.getElementById("file-input");
     const uploadList = document.getElementById("upload-list");
@@ -88,11 +157,12 @@
     }
 
     function uploadSingleFile(file) {
+      const t = I18N[lang];
       const li = document.createElement("li");
       li.className = "upload-item";
       li.innerHTML = `
         <span class="upload-name">${escapeHtml(file.name)}</span>
-        <span class="upload-status pending">Uploading…</span>
+        <span class="upload-status pending">${t.uploading}</span>
         <progress class="upload-progress" value="0" max="100"></progress>
       `;
       uploadList.prepend(li);
@@ -104,7 +174,7 @@
       formData.append("file", file);
 
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", "/upload");
+      xhr.open("POST", window.basePath + "/upload");
       xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
       xhr.upload.addEventListener("progress", e => {
@@ -116,22 +186,19 @@
       xhr.addEventListener("load", () => {
         progress.remove();
         if (xhr.status === 201) {
-          status.textContent = "✓ Done";
+          status.textContent = t.done;
           status.className = "upload-status success";
           refreshGallery();
         } else {
-          let reason = "Upload failed";
-          try { reason = JSON.parse(xhr.responseText).reason || reason; } catch (_) {}
-          status.textContent = `✗ ${reason}`;
+          status.textContent = t.failed;
           status.className = "upload-status error";
         }
-        // Auto-remove the status row after 5 seconds
         setTimeout(() => li.remove(), 5000);
       });
 
       xhr.addEventListener("error", () => {
         progress.remove();
-        status.textContent = "✗ Network error";
+        status.textContent = t.network_error;
         status.className = "upload-status error";
       });
 
@@ -139,20 +206,26 @@
     }
 
     // ── Gallery logic ─────────────────────────────────────────────────
+    let currentTotal = 0;
+
+    function refreshGalleryCount() {
+      const countEl = document.getElementById("photo-count");
+      const emptyEl = document.getElementById("t-empty");
+      countEl.textContent = currentTotal > 0 ? I18N[lang].photo_count(currentTotal) : "";
+      emptyEl.style.display = currentTotal === 0 ? "block" : "none";
+    }
 
     async function refreshGallery() {
       try {
-        const resp = await fetch("/photos", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+        const resp = await fetch(window.basePath + "/photos", { headers: { "X-Requested-With": "XMLHttpRequest" } });
         if (!resp.ok) return;
         const { photos, total } = await resp.json();
 
+        currentTotal = total;
+        refreshGalleryCount();
+
         const gallery = document.getElementById("gallery");
-        const countEl = document.getElementById("photo-count");
-        const emptyEl = document.getElementById("gallery-empty");
-
-        countEl.textContent = total > 0 ? `${total} photo${total !== 1 ? "s" : ""}` : "";
-        emptyEl.style.display = total === 0 ? "block" : "none";
-
+        
         // Remove cards for files no longer present
         const existing = new Set([...gallery.querySelectorAll(".photo-card")].map(c => c.dataset.name));
         const incoming = new Set(photos.map(p => p.name));
@@ -160,7 +233,7 @@
           if (!incoming.has(name)) gallery.querySelector(`[data-name="${CSS.escape(name)}"]`)?.remove();
         });
 
-        // Add new cards (prepend so newest appears first)
+        // Add new cards
         for (const photo of photos) {
           if (existing.has(photo.name)) continue;
           const card = buildCard(photo);
@@ -178,16 +251,17 @@
 
       const sizeKb = (photo.size / 1024).toFixed(1);
       const date   = new Date(photo.modified * 1000).toLocaleDateString();
+      const safeName = escapeHtml(photo.name);
 
       card.innerHTML = `
         <div class="photo-thumb">
-          <img src="${window.basePath || ''}/media/${encodeURIComponent(photo.name)}" alt="${escapeHtml(photo.name)}" loading="lazy" />
+          <img src="${window.basePath}/thumb/${encodeURIComponent(photo.name)}" alt="${safeName}" loading="lazy" />
         </div>
         <div class="photo-info">
-          <span class="photo-name" title="${escapeHtml(photo.name)}">${escapeHtml(photo.name)}</span>
+          <span class="photo-name" title="${safeName}">${safeName}</span>
           <span class="photo-meta">${sizeKb} KB · ${date}</span>
         </div>
-        <button class="btn-delete" aria-label="Delete ${escapeHtml(photo.name)}">✕</button>
+        <button class="btn-delete" aria-label="Delete">✕</button>
       `;
 
       card.querySelector(".btn-delete").addEventListener("click", () => deletePhoto(photo.name, card));
@@ -195,23 +269,24 @@
     }
 
     async function deletePhoto(filename, card) {
-      if (!confirm(`Delete "${filename}"?`)) return;
+      if (!confirm(I18N[lang].confirm_delete(filename))) return;
       card.classList.add("deleting");
       try {
-        const resp = await fetch(`/photos/${encodeURIComponent(filename)}`, { 
+        const resp = await fetch(window.basePath + `/photos/${encodeURIComponent(filename)}`, { 
             method: "DELETE",
             headers: { "X-Requested-With": "XMLHttpRequest" }
         });
         if (resp.ok) {
           card.remove();
-          refreshGallery(); // refresh count
+          currentTotal--;
+          refreshGalleryCount();
         } else {
           card.classList.remove("deleting");
-          alert("Could not delete file.");
+          alert(I18N[lang].failed);
         }
       } catch {
         card.classList.remove("deleting");
-        alert("Network error.");
+        alert(I18N[lang].network_error);
       }
     }
 
@@ -221,7 +296,8 @@
       })[c]);
     }
 
-    // Load gallery on page open
+    // Init
+    applyTranslations();
     refreshGallery();
   </script>
 </body>

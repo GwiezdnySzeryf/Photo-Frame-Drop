@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.12] - 2026-04-05
+### Fixed
+- Properly committed the HTML templates that implement the new EN/PL language toggle, the functional Sign out button, and the lightweight image thumbnails. A previous tool error prevented these UI changes from reaching the repository.
+
 ## [2.0.11] - 2026-04-05
 ### Added
 - Added multi-language support! There is now an EN/PL toggle switch next to the Sign out button. It remembers your choice in local storage.
