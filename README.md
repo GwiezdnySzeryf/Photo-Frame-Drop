@@ -13,11 +13,11 @@ directory.
 |---------|--------|
 | **Web UI via HA Ingress** | Accessible from the HA sidebar; no port-forwarding needed |
 | **Drag & drop uploads** | Drop multiple photos at once; progress bar per file |
-| **Gallery with delete** | Browse and remove uploaded files from the same UI |
-| **Password protection** | Session cookie with SHA-256 derived token |
-| **File validation** | Extension allowlist + per-chunk size limit enforced server-side |
+| **Gallery with delete** | Browse thumbnails and remove uploaded files from the same UI |
+| **Password protection** | Session cookie with SHA-256 derived token with Brute Force protection |
+| **File validation** | Extension allowlist + per-chunk size limit enforced server-side + filetype MIME validation |
 | **HA notifications** | Optional persistent notification in HA after each upload |
-| **Multi-arch** | Runs on `aarch64`, `amd64`, `armhf`, `armv7`, `i386` |
+| **Multi-arch** | Runs on `aarch64` and `amd64` |
 
 ---
 
@@ -64,6 +64,7 @@ It does not use WebSockets or polling — it is a stateless HTTP server.
 | `allowed_extensions` | `str` | `jpg,jpeg,png,gif,webp,bmp` | Comma-separated allowed extensions |
 | `notify_on_upload` | `bool` | `false` | Send HA persistent notification on upload |
 | `notify_message` | `str` | `New photo added to the frame!` | Notification body |
+| `login_description` | `str` | `""` | Optional text displayed on the login page |
 
 Full documentation is in [`photo_frame_drop/DOCS.md`](photo_frame_drop/DOCS.md)
 and is also shown inside the HA add-on UI.

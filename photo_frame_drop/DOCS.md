@@ -1,138 +1,113 @@
-# Photo Frame Drop — Documentation
+# Photo Frame Drop
 
-## What It Does
-
-Photo Frame Drop is a Home Assistant Add-on that provides a password-protected,
-drag-and-drop web interface for uploading photos directly into your HA `/media`
-folder. It is designed to work alongside any digital photo frame software
-(Pi3D PictureFrame, kiosk browser, slideshow app) that monitors a local folder.
+A **Home Assistant Add-on** that provides a password-protected, drag-and-drop
+web interface for uploading photos directly into your HA `/media` folder —
+ready to be picked up by any digital photo frame software pointed at that
+directory.
 
 ---
 
-## How It Connects to Home Assistant
+## What It Does
 
-This add-on runs as a Docker container managed by the HA Supervisor.
+| Feature | Detail |
+|---------|--------|
+| **Web UI via HA Ingress** | Accessible from the HA sidebar; no port-forwarding needed |
+| **Drag & drop uploads** | Drop multiple photos at once; progress bar per file |
+| **Gallery with delete** | Browse thumbnails and remove uploaded files from the same UI |
+| **Password protection** | Session cookie with SHA-256 derived token with Brute Force protection |
+| **File validation** | Extension allowlist + per-chunk size limit enforced server-side + filetype MIME validation |
+| **HA notifications** | Optional persistent notification in HA after each upload |
+| **Multi-arch** | Runs on `aarch64` and `amd64` |
+
+---
+
+## Architecture
 
 ```
 Browser (any device, any location)
-    │
-    ▼
-HA Ingress (no port-forwarding required)
-    │
-    ▼  HTTP  
-aiohttp web server  ─────────────────────►  /media/<target_folder>/
-    │
-    │  (optional, if notify_on_upload = true)
-    ▼
-Supervisor REST API → persistent_notification/create
+        │
+        ▼  HTTPS via HA Ingress
+aiohttp web server (port 8099, inside container)
+        │
+        ├──► /media/<target_folder>/   (HA media share, mapped read-write)
+        │
+        └──► http://supervisor/core/api/services/persistent_notification/create
+             (optional — Supervisor REST API, only if notify_on_upload = true)
 ```
 
-- **Storage**: photos land directly in HA's `/media` share, mapped read-write.
-- **Auth**: HA Ingress session + a separate add-on password cookie.
-- **Notifications**: sent via `http://supervisor/core/api/...` using the
-  `$SUPERVISOR_TOKEN` injected by the Supervisor. Requires `hassio_api: true`
-  (already set in `config.yaml`).
-- **No polling, no WebSocket**: the add-on is a stateless HTTP server; all
-  state lives in the filesystem.
+This is a standard HA Add-on: a Docker container managed by the HA Supervisor,
+using `bashio` to read configuration and `s6-overlay` for process management.
+It does not use WebSockets or polling — it is a stateless HTTP server.
 
 ---
 
 ## Installation
 
-1. In Home Assistant go to **Settings → Add-ons → Add-on Store**.
-2. Click ⋮ (top right) → **Repositories**.
-3. Paste `https://github.com/GwiezdnySzeryf/Photo-Frame-Drop` and click **Add**.
-4. Close the dialog and refresh the page.
-5. Find **Photo Frame Drop** and click **Install**.
+1. **Settings → Add-ons → Add-on Store**
+2. Click ⋮ → **Repositories** → paste this URL → **Add**:
+   ```
+   https://github.com/GwiezdnySzeryf/Photo-Frame-Drop
+   ```
+3. Refresh the page, find **Photo Frame Drop**, click **Install**.
+4. Go to the **Configuration** tab, set your password and target folder.
+5. Click **Start**.
 
 ---
 
-## Configuration
+## Configuration Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `target_folder` | string | `digital_frame` | Subfolder inside `/media` where photos are saved |
-| `password` | string | `changeme` | Web UI access password — **change before use** |
-| `max_upload_mb` | int 1–500 | `50` | Maximum allowed file size per upload |
-| `allowed_extensions` | string | `jpg,jpeg,png,gif,webp,bmp` | Comma-separated permitted extensions |
-| `notify_on_upload` | bool | `false` | Send HA notification after each upload |
-| `notify_message` | string | `New photo added to the frame!` | Notification body text |
+| `target_folder` | `str` | `digital_frame` | Subfolder inside `/media` to save photos |
+| `password` | `str` | `changeme` | **Change this.** Web UI access password |
+| `max_upload_mb` | `int` 1–500 | `50` | Max file size per upload in MB |
+| `allowed_extensions` | `str` | `jpg,jpeg,png,gif,webp,bmp` | Comma-separated allowed extensions |
+| `notify_on_upload` | `bool` | `false` | Send HA persistent notification on upload |
+| `notify_message` | `str` | `New photo added to the frame!` | Notification body |
+| `login_description` | `str` | `""` | Optional text displayed on the login page |
 
-### Important: change the default password
-
-The default password is `changeme`. Change it in the **Configuration** tab before
-starting the add-on. If you forget, the add-on will log a warning on every start.
-
----
-
-## Usage
-
-1. Configure and **Start** the add-on.
-2. Open the UI via the **Photo Frame Drop** entry in the sidebar (or
-   **Open Web UI** on the add-on page).
-3. Enter your password.
-4. Drag photos onto the upload zone, or click to browse.
-5. Uploaded photos appear immediately in `/media/<target_folder>/`.
-
-Point your frame software at the same path.
+Full documentation is in [`photo_frame_drop/DOCS.md`](photo_frame_drop/DOCS.md)
+and is also shown inside the HA add-on UI.
 
 ---
 
-## Accessing from Outside Your Local Network
+## Repository Structure
 
-The add-on uses **HA Ingress** by default — no extra port forwarding needed.
-If your HA instance is reachable externally (via Nabu Casa / Home Assistant
-Cloud, Nginx Proxy Manager, or Cloudflare Tunnel), the add-on UI is
-automatically accessible at the same address.
-
-> **Do not expose port 8099 directly** to the internet. Use HA Ingress or
-> a TLS-terminating reverse proxy instead.
-
----
-
-## Troubleshooting
-
-### Photos are not appearing on the frame
-
-- Confirm `target_folder` in add-on config matches the folder your frame
-  software monitors.
-- Check **Logs** tab: the add-on logs the full destination path on startup.
-- Verify the `/media` share exists and is writable in HA
-  (**Settings → System → Storage**).
-
-### Upload fails immediately
-
-- Check that the file extension is in `allowed_extensions`.
-- Check that the file is under `max_upload_mb`.
-- Check **Logs** for the specific rejection reason.
-
-### "Authentication required" after uploading from a different device
-
-- The session cookie is device-specific. Each new browser/device needs to
-  log in once.
-- Cookie lifetime is 7 days.
-
-### Notifications are not appearing in HA
-
-- Confirm `notify_on_upload` is `true` and the add-on has been restarted
-  after changing the setting.
-- Check Logs for `HA notification sent` or any warning lines.
-- Persistent notifications appear in HA under the 🔔 bell icon.
-
-### Add-on fails to start
-
-1. Open the **Logs** tab.
-2. Look for lines starting with `[FATAL]` — these explain the exact reason.
-3. Common causes:
-   - `target_folder` contains `..` or starts with `/`
-   - The `/media` share is not enabled in your HA installation
+```
+Photo-Frame-Drop/
+├── repository.yaml                      # HA add-on repo manifest
+├── README.md                            # This file
+│
+└── photo_frame_drop/                    # The add-on
+    ├── config.yaml                      # Metadata, schema, ingress, watchdog
+    ├── Dockerfile                       # Multi-arch, HA base Python image
+    ├── requirements.txt                 # Pinned Python dependencies
+    ├── DOCS.md                          # User docs (shown in HA UI)
+    ├── CHANGELOG.md
+    ├── icon.png                         # 256×256 add-on icon
+    ├── logo.png                         # 256×100 add-on logo
+    │
+    ├── translations/
+    │   └── en.yaml                      # Config option labels for HA UI
+    │
+    ├── rootfs/
+    │   └── etc/services.d/photo_frame_drop/
+    │       ├── run                      # s6 launcher: reads config, exports env
+    │       └── finish                   # s6 exit handler
+    │
+    └── app/
+        ├── main.py                      # Entrypoint, config validation, server runner
+        ├── server.py                    # All HTTP route handlers
+        ├── notifications.py             # HA Supervisor notification helper
+        ├── templates/
+        │   ├── login.html
+        │   └── index.html               # Upload UI + gallery
+        └── static/
+            └── style.css
+```
 
 ---
 
-## Limitations
+## License
 
-- Single shared password — no per-user accounts.
-- No thumbnail preview in the gallery (filenames and file sizes only).
-- Files deleted directly from the filesystem are not reflected in the gallery
-  until the page is refreshed.
-- The add-on does **not** display photos — it only manages uploads.
+MIT — see [LICENSE](LICENSE).
