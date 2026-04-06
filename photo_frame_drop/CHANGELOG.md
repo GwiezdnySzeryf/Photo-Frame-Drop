@@ -5,6 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.11] - 2026-04-05
+### Added
+- Added multi-language support! There is now an EN/PL toggle switch next to the Sign out button. It remembers your choice in local storage.
+- The server now generates lightweight `256x256` thumbnails on-the-fly (cached in `.thumbs/`) instead of delivering the entire multi-megabyte image over the network just to render the tiny preview square. Greatly improves gallery load times.
+
 ## [2.0.10] - 2026-04-05
 ### Fixed
 - Fixed the "Sign out" button completely. Ingress pathing rules caused the `fetch("/logout")` Javascript call to break out of the addon and crash to a generic Cloudflare 524 Timeout error because it lacked the `X-Ingress-Path` prefix.

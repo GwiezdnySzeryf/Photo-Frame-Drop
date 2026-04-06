@@ -139,6 +139,7 @@ async def handle_index(request: web.Request) -> web.Response:
         text = (TEMPLATES_DIR / "login.html").read_text()
         text = text.replace('href="/static/', f'href="{base_path}/static/')
         text = text.replace('action="/login"', f'action="{base_path}/login"')
+        text = text.replace("{{ base_path }}", base_path)
         return web.Response(text=text, content_type="text/html")
 
     text = (TEMPLATES_DIR / "index.html").read_text()
@@ -146,7 +147,6 @@ async def handle_index(request: web.Request) -> web.Response:
     text = text.replace('"/upload"', f'"{base_path}/upload"')
     text = text.replace('"/photos"', f'"{base_path}/photos"')
     text = text.replace("`/photos/", f"`{base_path}/photos/")
-    text = text.replace('"/logout"', f'"{base_path}/logout"')
     text = text.replace("{{ base_path }}", base_path)
     return web.Response(text=text, content_type="text/html")
 
