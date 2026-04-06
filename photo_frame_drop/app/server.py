@@ -28,9 +28,13 @@ from aiohttp import web
 
 from notifications import send_ha_notification
 
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
 logger = logging.getLogger("photo_frame_drop.server")
 
 _UNSAFE_CHARS = re.compile(r"[^\w\-. ]")
+_executor = ThreadPoolExecutor(max_workers=2)
 _SESSION_SECRET = secrets.token_urlsafe(
     32
 )  # Random secret generated on startup prevents deterministic sessions
@@ -109,6 +113,7 @@ def create_app(config: dict[str, Any]) -> web.Application:
     app.router.add_get("/photos", handle_list_photos)
     app.router.add_delete("/photos/{filename}", handle_delete_photo)
     app.router.add_get("/media/{filename}", handle_get_media)
+    app.router.add_get("/thumb/{filename}", handle_get_thumb)
 
     if STATIC_DIR.is_dir():
         app.router.add_static("/static", STATIC_DIR, show_index=False)
@@ -334,6 +339,52 @@ async def handle_delete_photo(request: web.Request) -> web.Response:
     client_ip = _get_client_ip(request)
     logger.info("Deleted: %s (requested by %s)", filename, client_ip)
     return web.json_response({"status": "deleted", "filename": filename})
+
+
+def _generate_thumb_sync(src_path: Path, dst_path: Path) -> None:
+    from PIL import Image, ImageOps
+
+    with Image.open(src_path) as img:
+        ImageOps.exif_transpose(img, in_place=True)
+        img.thumbnail((256, 256), Image.Resampling.LANCZOS)
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.save(dst_path, format="JPEG", quality=80)
+
+
+async def handle_get_thumb(request: web.Request) -> web.Response:
+    config: dict = request.app["config"]
+    _require_auth(config, request)
+
+    raw_filename = request.match_info["filename"]
+    filename = _sanitize_filename(raw_filename)
+    media_root = Path(config["media_path"]).resolve()
+    target = (media_root / filename).resolve()
+
+    if not str(target).startswith(str(media_root)):
+        raise web.HTTPForbidden(reason="Path traversal attempt blocked.")
+
+    if not target.exists() or not target.is_file():
+        raise web.HTTPNotFound(reason=f"File '{filename}' not found.")
+
+    thumb_dir = media_root / ".thumbs"
+    if not thumb_dir.exists():
+        thumb_dir.mkdir(exist_ok=True)
+
+    thumb_path = thumb_dir / f"{filename}.jpg"
+
+    if not thumb_path.exists() or thumb_path.stat().st_mtime < target.stat().st_mtime:
+        try:
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(
+                _executor, _generate_thumb_sync, target, thumb_path
+            )
+        except Exception as exc:
+            logger.error("Thumbnail generation failed for %s: %s", target, exc)
+            # Fallback to serving the original image
+            return web.FileResponse(target)
+
+    return web.FileResponse(thumb_path)
 
 
 async def handle_get_media(request: web.Request) -> web.Response:
