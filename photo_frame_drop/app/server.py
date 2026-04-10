@@ -187,6 +187,17 @@ async def handle_login(request: web.Request) -> web.Response:
 
     _record_failed_login(client_ip)
     logger.warning("Failed login attempt from %s", client_ip)
+
+    if config.get("notify_on_failed_login") and config.get("supervisor_token"):
+        asyncio.create_task(
+            send_ha_notification(
+                token=config["supervisor_token"],
+                message=f"Błędna próba logowania do Photo Frame Drop z adresu IP: {client_ip}",
+                title="⚠️ Alert bezpieczeństwa: Photo Frame Drop"
+            )
+        )
+        )
+
     return web.HTTPFound(f"{base_path}/?error=wrong_password")
 
 

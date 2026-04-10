@@ -233,6 +233,14 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
   border-radius: 6px;
   background: var(--bg);
   flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.photo-thumb:hover, .photo-thumb:focus {
+  opacity: 0.85;
+  transform: scale(1.05);
+  outline: none;
 }
 
 .photo-thumb img {

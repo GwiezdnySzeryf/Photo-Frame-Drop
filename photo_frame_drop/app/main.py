@@ -84,6 +84,10 @@ def load_config() -> dict:
         "notify_message": os.environ.get(
             "PHOTO_FRAME_NOTIFY_MSG", "New photo uploaded!"
         ),
+        "notify_on_failed_login": os.environ.get(
+            "PHOTO_FRAME_NOTIFY_FAILED_LOGIN", "true"
+        ).lower()
+        == "true",
         "login_description": os.environ.get("PHOTO_FRAME_LOGIN_DESC", ""),
         "supervisor_token": os.environ.get("PHOTO_FRAME_SUPERVISOR_TOKEN", ""),
         "port": port,

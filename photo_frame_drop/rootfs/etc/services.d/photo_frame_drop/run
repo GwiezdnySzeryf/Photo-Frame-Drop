@@ -10,6 +10,7 @@ declare max_upload_mb
 declare allowed_extensions
 declare notify_on_upload
 declare notify_message
+declare notify_on_failed_login
 declare login_description
 
 bashio::log.info "Photo Frame Drop starting..."
@@ -34,6 +35,11 @@ max_upload_mb=$(bashio::config "max_upload_mb")
 allowed_extensions=$(bashio::config "allowed_extensions")
 notify_on_upload=$(bashio::config "notify_on_upload")
 notify_message=$(bashio::config "notify_message")
+if bashio::config.has_value "notify_on_failed_login"; then
+    notify_on_failed_login=$(bashio::config "notify_on_failed_login")
+else
+    notify_on_failed_login="true"
+fi
 if bashio::config.has_value "login_description"; then
     login_description=$(bashio::config "login_description")
 else
@@ -81,6 +87,7 @@ export PHOTO_FRAME_MAX_MB="${max_upload_mb}"
 export PHOTO_FRAME_EXTENSIONS="${allowed_extensions}"
 export PHOTO_FRAME_NOTIFY="${notify_on_upload}"
 export PHOTO_FRAME_NOTIFY_MSG="${notify_message}"
+export PHOTO_FRAME_NOTIFY_FAILED_LOGIN="${notify_on_failed_login}"
 export PHOTO_FRAME_LOGIN_DESC="${login_description}"
 export PHOTO_FRAME_SUPERVISOR_TOKEN="${SUPERVISOR_TOKEN}"
 export PHOTO_FRAME_PORT="8099"

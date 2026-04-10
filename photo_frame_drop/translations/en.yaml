@@ -25,6 +25,9 @@ configuration:
   notify_message:
     name: Notification Message
     description: Text of the HA notification sent after each successful upload.
+  notify_on_failed_login:
+    name: Notify on Failed Login
+    description: Send a security alert notification to Home Assistant when someone enters an incorrect password.
   login_description:
     name: Login Description
     description: Optional text to display on the login screen below the title.

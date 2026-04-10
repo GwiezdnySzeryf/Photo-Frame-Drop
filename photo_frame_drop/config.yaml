@@ -1,5 +1,5 @@
 name: "Photo Frame Drop"
-version: "2.0.17"
+version: "2.0.18"
 slug: photo_frame_drop
 description: "Drag & drop photos into your HA /media folder from anywhere, with a gallery and password protection."
 url: "https://github.com/GwiezdnySzeryf/Photo-Frame-Drop"
@@ -32,6 +32,7 @@ options:
   allowed_extensions: "jpg,jpeg,png,gif,webp,bmp"
   notify_on_upload: false
   notify_message: "New photo added to the frame!"
+  notify_on_failed_login: true
   login_description: ""
 
 schema:
@@ -41,6 +42,7 @@ schema:
   allowed_extensions: str
   notify_on_upload: bool
   notify_message: str
+  notify_on_failed_login: bool
   login_description: str?
 
 watchdog: "http://[HOST]:[PORT:8099]/health"

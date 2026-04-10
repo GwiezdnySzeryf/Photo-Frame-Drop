@@ -24,6 +24,9 @@ configuration:
   notify_message:
     name: Treść powiadomienia
     description: Tekst wyświetlany w powiadomieniu po pomyślnym dodaniu pliku.
+  notify_on_failed_login:
+    name: Powiadamiaj o błędnym logowaniu
+    description: Wyślij alert bezpieczeństwa do Home Assistant, gdy ktoś wpisze niepoprawne hasło logowania.
   login_description:
     name: Opis na ekranie logowania
     description: Opcjonalny tekst do wyświetlenia na ekranie logowania pod tytułem.
