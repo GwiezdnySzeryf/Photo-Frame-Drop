@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop</title>
-  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.3" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.4" />
 </head>
 <body>
   <!-- ─── Header ─────────────────────────────────────────────────── -->
@@ -61,7 +61,8 @@
   <dialog id="lightbox" class="lightbox-dialog" aria-label="Image preview">
     <div class="lightbox-content">
       <span class="lightbox-close" aria-label="Close lightbox">&times;</span>
-      <img id="lightbox-img" src="" alt="Full size preview" />
+      <div id="lightbox-spinner" class="lightbox-spinner"></div>
+      <img id="lightbox-img" src="" alt="Full size preview" style="opacity: 0;" />
     </div>
   </dialog>
 
@@ -333,8 +334,16 @@
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     const lightboxClose = document.querySelector(".lightbox-close");
+    const lightboxSpinner = document.getElementById("lightbox-spinner");
     
+    lightboxImg.addEventListener("load", () => {
+        lightboxSpinner.style.display = "none";
+        lightboxImg.style.opacity = "1";
+    });
+
     function openLightbox(filename) {
+        lightboxImg.style.opacity = "0";
+        lightboxSpinner.style.display = "block";
         lightboxImg.src = window.basePath + "/media/" + encodeURIComponent(filename);
         lightbox.showModal();
         lightboxImg.focus();
@@ -343,6 +352,7 @@
     function closeLightbox() {
         lightbox.close();
         lightboxImg.src = "";
+        lightboxImg.style.opacity = "0";
     }
 
     lightbox.addEventListener("click", (e) => {

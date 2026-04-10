@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.24] - 2026-04-06
+### Added
+- Added a loading spinner to the Lightbox gallery preview. When clicking a photo, a spinner will display while the high-resolution image is downloading from the server, and the old image is hidden entirely. The new image smoothly fades in once fully loaded, eliminating the "flashing" or glitchy visual delay of the previous photo sticking around.
+
 ## [2.0.23] - 2026-04-06
 ### Changed
 - Re-architected the Lightbox photo preview mechanism to use the native HTML5 `<dialog>` element (just like the About window) instead of a custom CSS overlay toggle. This provides a much more accessible experience, natively blocks background scrolling, naturally dims the backdrop via the `::backdrop` pseudo-element, and inherits standard browser behavior (like closing on Escape key) without the need for manual event listeners.
