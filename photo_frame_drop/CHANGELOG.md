@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.19] - 2026-04-06
+### Fixed
+- Fixed an `unmatched ')'` SyntaxError in `server.py` on startup, which caused the add-on to fail to start and crash immediately upon launch.
+
 ## [2.0.18] - 2026-04-06
 ### Fixed
 - Fixed an `unmatched ')'` SyntaxError in `server.py` on startup, which caused the add-on to fail to start and crash immediately upon launch.
