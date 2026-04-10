@@ -1,0 +1,32 @@
+configuration:
+  target_folder:
+    name: Folder docelowy
+    description: >-
+      Podfolder wewnątrz katalogu /media, w którym będą zapisywane zdjęcia.
+      Przykład: digital_frame → zdjęcia trafią do /media/digital_frame/
+  password:
+    name: Hasło dostępu
+    description: >-
+      Hasło zabezpieczające interfejs przesyłania zdjęć.
+      WAŻNE: Zmień domyślne hasło przed rozpoczęciem korzystania.
+  max_upload_mb:
+    name: Maksymalny rozmiar (MB)
+    description: Maksymalny dopuszczalny rozmiar pojedynczego pliku w megabajtach (1–500 MB).
+  allowed_extensions:
+    name: Dozwolone rozszerzenia
+    description: >-
+      Oddzielona przecinkami lista dozwolonych rozszerzeń plików (bez kropek).
+      Przykład: jpg,jpeg,png,gif,webp
+  notify_on_upload:
+    name: Powiadamiaj o zdjęciach
+    description: >-
+      Wyślij stałe powiadomienie na telefon / w interfejsie Home Assistant, gdy pojawi się nowe zdjęcie.
+  notify_message:
+    name: Treść powiadomienia
+    description: Tekst wyświetlany w powiadomieniu po pomyślnym dodaniu pliku.
+  login_description:
+    name: Opis na ekranie logowania
+    description: Opcjonalny tekst do wyświetlenia na ekranie logowania pod tytułem.
+
+network:
+  8099/tcp: Interfejs WWW Photo Frame Drop

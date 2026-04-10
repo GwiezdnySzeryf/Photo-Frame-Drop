@@ -342,7 +342,7 @@ async def handle_delete_photo(request: web.Request) -> web.Response:
     target = (media_root / filename).resolve()
 
     # Enhanced Path-traversal guard: target must strictly be inside media_root
-    if not str(target).startswith(str(media_root)):
+    if not target.is_relative_to(media_root):
         logger.warning(
             "Path traversal blocked: %r resolved to %s", raw_filename, target
         )
@@ -385,7 +385,7 @@ async def handle_get_thumb(request: web.Request) -> web.Response:
     media_root = Path(config["media_path"]).resolve()
     target = (media_root / filename).resolve()
 
-    if not str(target).startswith(str(media_root)):
+    if not target.is_relative_to(media_root):
         raise web.HTTPForbidden(reason="Path traversal attempt blocked.")
 
     if not target.exists() or not target.is_file():
@@ -420,7 +420,7 @@ async def handle_get_media(request: web.Request) -> web.Response:
     media_root = Path(config["media_path"]).resolve()
     target = (media_root / filename).resolve()
 
-    if not str(target).startswith(str(media_root)):
+    if not target.is_relative_to(media_root):
         logger.warning(
             "Path traversal blocked: %r resolved to %s", raw_filename, target
         )

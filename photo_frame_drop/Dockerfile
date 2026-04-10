@@ -5,18 +5,24 @@ FROM $BUILD_FROM
 RUN apk add --no-cache \
     python3 \
     py3-pip \
-    build-base \
-    libffi-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    libwebp-dev \
-    zlib-dev
+    libjpeg-turbo \
+    libpng \
+    libwebp \
+    zlib
 
 WORKDIR /app
 
 # Copy and install Python dependencies first (better layer caching)
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+RUN apk add --no-cache --virtual .build-deps \
+    build-base \
+    libffi-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    zlib-dev \
+    && pip3 install --no-cache-dir --break-system-packages -r requirements.txt \
+    && apk del .build-deps
 
 # Copy s6-overlay service scripts
 COPY rootfs/ /
@@ -28,7 +34,8 @@ RUN chmod a+x \
 # Copy application source
 COPY app/ /app/
 
+ARG BUILD_VERSION
 LABEL \
-    io.hass.version="2.0.3" \
+    io.hass.version="${BUILD_VERSION}" \
     io.hass.type="addon" \
     io.hass.arch="aarch64|amd64"

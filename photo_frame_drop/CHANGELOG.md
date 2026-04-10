@@ -5,6 +5,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.17] - 2026-04-06
+### Security & Optimization
+- **Path Traversal Security**: Replaced string-based `.startswith()` checks with Python's safer `.is_relative_to()` to prevent edge-case directory escapes (e.g. escaping `/media/digital_frame` to `/media/digital_frame_secret`).
+- **Docker Image Size**: Restructured the Dockerfile to use Alpine virtual build dependencies (`apk add --virtual`). Compilers (`build-base`, `libffi-dev`, etc.) are now completely removed after compiling Python wheels, significantly reducing the final Docker image size.
+- **Translations**: Added Polish translation file (`translations/pl.yaml`) for the Home Assistant configuration UI natively.
+
 ## [2.0.16] - 2026-04-06
 ### Fixed
 - Fixed bug causing an empty gallery and upload errors when using Home Assistant Ingress due to conflicting URL parsing in the Python backend.
