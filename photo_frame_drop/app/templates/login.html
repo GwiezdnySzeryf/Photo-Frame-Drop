@@ -8,7 +8,8 @@
 </head>
 <body class="login-page">
   <div class="login-card">
-    <div style="display:flex; justify-content:flex-end">
+    <div style="display:flex; justify-content:flex-end; gap:0.5rem">
+      <button type="button" class="btn-ghost" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" id="btn-about" aria-label="About">?</button>
       <button type="button" class="btn-ghost" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" id="btn-lang" aria-label="Toggle language">EN</button>
     </div>
     
@@ -33,6 +34,21 @@
     </form>
   </div>
 
+  <!-- ─── About Dialog ────────────────────────────────────────────── -->
+  <dialog id="about-dialog" class="about-dialog">
+    <div class="dialog-content">
+      <h2 id="t-about-title">O dodatku</h2>
+      <p id="t-about-desc">Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.</p>
+      
+      <a href="https://github.com/GwiezdnySzeryf/Photo-Frame-Drop" target="_blank" rel="noopener noreferrer" class="github-link">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        GitHub Repository
+      </a>
+      
+      <button type="button" id="btn-close-about" class="btn-ghost" style="width:100%; margin-top: 1rem;">Zamknij</button>
+    </div>
+  </dialog>
+
   <script>
     "use strict";
 
@@ -42,14 +58,20 @@
         password: "Hasło",
         submit: "Zaloguj się",
         placeholder: "Wpisz hasło",
-        error: "Nieprawidłowe hasło. Spróbuj ponownie."
+        error: "Nieprawidłowe hasło. Spróbuj ponownie.",
+        about_title: "O dodatku",
+        about_desc: "Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.",
+        close: "Zamknij"
       },
       en: {
         title: "Photo Frame Drop",
         password: "Password",
         submit: "Sign in",
         placeholder: "Enter password",
-        error: "Incorrect password. Try again."
+        error: "Incorrect password. Try again.",
+        about_title: "About",
+        about_desc: "Photo Frame Drop is a tool to easily upload photos to your digital picture frame straight from Home Assistant.",
+        close: "Close"
       }
     };
 
@@ -64,6 +86,10 @@
       document.getElementById("t-submit").textContent = t.submit;
       document.getElementById("error-banner").textContent = t.error;
       document.getElementById("btn-lang").textContent = lang === "pl" ? "EN" : "PL";
+
+      document.getElementById("t-about-title").textContent = t.about_title;
+      document.getElementById("t-about-desc").textContent = t.about_desc;
+      document.getElementById("btn-close-about").textContent = t.close;
     }
 
     document.getElementById("btn-lang").addEventListener("click", () => {
@@ -73,6 +99,18 @@
     });
 
     applyTranslations();
+
+    // ── About Dialog ─────────────────────────────────────────────────
+    const aboutDialog = document.getElementById("about-dialog");
+    document.getElementById("btn-about").addEventListener("click", () => {
+      aboutDialog.showModal();
+    });
+    document.getElementById("btn-close-about").addEventListener("click", () => {
+      aboutDialog.close();
+    });
+    aboutDialog.addEventListener("click", (e) => {
+      if (e.target === aboutDialog) aboutDialog.close();
+    });
 
     // Show error banner if redirected back with ?error=...
     if (new URLSearchParams(window.location.search).get("error")) {

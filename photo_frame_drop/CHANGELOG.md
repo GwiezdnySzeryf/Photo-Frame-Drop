@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.22] - 2026-04-06
+### Added
+- Added an "About" dialog window accessible via the `?` button next to the language toggle. It contains brief information about the add-on and a link to the GitHub repository. It works across both the login and main pages and supports i18n translations.
+
 ## [2.0.21] - 2026-04-06
 ### Fixed
 - Fixed a rendering bug where the text "Brak zdjęć" (No photos) would appear underneath the gallery even when photos were uploaded. Removed duplicated and improperly nested markup that was causing the grid CSS layout to fail hiding the text.

@@ -316,6 +316,61 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
   color: var(--error);
 }
 
+/* ── Dialog ───────────────────────────────────────────────────────── */
+.about-dialog {
+  margin: auto;
+  padding: 2rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  outline: none;
+}
+
+.about-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+}
+
+.about-dialog h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.about-dialog p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--surface2);
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+  width: 100%;
+}
+
+.github-link:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .gallery { grid-template-columns: 1fr; }

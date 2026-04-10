@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop</title>
-  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.1" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.2" />
 </head>
 <body>
   <!-- ─── Header ─────────────────────────────────────────────────── -->
@@ -12,6 +12,7 @@
     <span class="header-icon">🖼️</span>
     <h1 id="t-title">Photo Frame Drop</h1>
     <div style="margin-left:auto; display:flex; gap:0.5rem">
+      <button type="button" class="btn-ghost" id="btn-about" aria-label="About">?</button>
       <button type="button" class="btn-ghost" id="btn-lang" aria-label="Toggle language">EN</button>
       <button type="button" class="btn-ghost" id="btn-logout">Wyloguj</button>
     </div>
@@ -62,6 +63,21 @@
     <img id="lightbox-img" src="" alt="Full size preview" />
   </div>
 
+  <!-- ─── About Dialog ────────────────────────────────────────────── -->
+  <dialog id="about-dialog" class="about-dialog">
+    <div class="dialog-content">
+      <h2 id="t-about-title">O dodatku</h2>
+      <p id="t-about-desc">Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.</p>
+      
+      <a href="https://github.com/GwiezdnySzeryf/Photo-Frame-Drop" target="_blank" rel="noopener noreferrer" class="github-link">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        GitHub Repository
+      </a>
+      
+      <button type="button" id="btn-close-about" class="btn-ghost" style="width:100%; margin-top: 1rem;">Zamknij</button>
+    </div>
+  </dialog>
+
   <script>
     "use strict";
     window.basePath = "{{ base_path }}";
@@ -81,6 +97,9 @@
         network_error: "✗ Błąd sieci",
         photo_count: (n) => n === 1 ? `1 zdjęcie` : (n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20)) ? `${n} zdjęcia` : `${n} zdjęć`,
         confirm_delete: (name) => `Czy na pewno usunąć "${name}"?`,
+        about_title: "O dodatku",
+        about_desc: "Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.",
+        close: "Zamknij"
       },
       en: {
         title: "Photo Frame Drop",
@@ -95,6 +114,9 @@
         network_error: "✗ Network error",
         photo_count: (n) => n === 1 ? `1 photo` : `${n} photos`,
         confirm_delete: (name) => `Delete "${name}"?`,
+        about_title: "About",
+        about_desc: "Photo Frame Drop is a tool to easily upload photos to your digital picture frame straight from Home Assistant.",
+        close: "Close"
       }
     };
 
@@ -111,6 +133,10 @@
       document.getElementById("t-empty").textContent = t.empty;
       document.getElementById("btn-lang").textContent = lang === "pl" ? "EN" : "PL";
       
+      document.getElementById("t-about-title").textContent = t.about_title;
+      document.getElementById("t-about-desc").textContent = t.about_desc;
+      document.getElementById("btn-close-about").textContent = t.close;
+      
       // Update existing list/status texts
       refreshGalleryCount();
     }
@@ -119,6 +145,18 @@
       lang = lang === "pl" ? "en" : "pl";
       localStorage.setItem("pfd_lang", lang);
       applyTranslations();
+    });
+
+    // ── About Dialog ─────────────────────────────────────────────────
+    const aboutDialog = document.getElementById("about-dialog");
+    document.getElementById("btn-about").addEventListener("click", () => {
+      aboutDialog.showModal();
+    });
+    document.getElementById("btn-close-about").addEventListener("click", () => {
+      aboutDialog.close();
+    });
+    aboutDialog.addEventListener("click", (e) => {
+      if (e.target === aboutDialog) aboutDialog.close();
     });
 
     // ── Logout logic ─────────────────────────────────────────────────
