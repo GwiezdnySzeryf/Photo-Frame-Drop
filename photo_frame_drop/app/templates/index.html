@@ -51,9 +51,8 @@
         <h2 id="t-gallery-title">Wgrane zdjęcia</h2>
         <span id="photo-count" class="photo-count"></span>
       </div>
-      <div id="gallery" class="gallery">
-        <p class="gallery-empty" id="t-empty">Brak zdjęć.</p>
-      </div>
+      <p class="gallery-empty" id="t-empty">Brak zdjęć.</p>
+      <div id="gallery" class="gallery"></div>
     </section>
   </main>
 
@@ -62,11 +61,6 @@
     <span class="lightbox-close" aria-label="Close lightbox">&times;</span>
     <img id="lightbox-img" src="" alt="Full size preview" />
   </div>
-      <div id="gallery" class="gallery">
-        <p class="gallery-empty" id="t-empty">Brak zdjęć.</p>
-      </div>
-    </section>
-  </main>
 
   <script>
     "use strict";
@@ -223,16 +217,19 @@
       const countEl = document.getElementById("photo-count");
       const emptyEl = document.getElementById("t-empty");
       countEl.textContent = currentTotal > 0 ? I18N[lang].photo_count(currentTotal) : "";
-      emptyEl.style.display = currentTotal === 0 ? "block" : "none";
+      if (emptyEl) {
+        emptyEl.style.display = currentTotal > 0 ? "none" : "block";
+      }
     }
 
     async function refreshGallery() {
       try {
         const resp = await fetch(window.basePath + "/photos", { headers: { "X-Requested-With": "XMLHttpRequest" } });
         if (!resp.ok) return;
-        const { photos, total } = await resp.json();
+        const data = await resp.json();
+        const photos = data.photos || [];
 
-        currentTotal = total;
+        currentTotal = photos.length;
         refreshGalleryCount();
 
         const gallery = document.getElementById("gallery");
