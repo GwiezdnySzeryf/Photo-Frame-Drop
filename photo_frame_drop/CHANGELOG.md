@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.23] - 2026-04-06
+### Changed
+- Re-architected the Lightbox photo preview mechanism to use the native HTML5 `<dialog>` element (just like the About window) instead of a custom CSS overlay toggle. This provides a much more accessible experience, natively blocks background scrolling, naturally dims the backdrop via the `::backdrop` pseudo-element, and inherits standard browser behavior (like closing on Escape key) without the need for manual event listeners.
+
 ## [2.0.22] - 2026-04-06
 ### Added
 - Added an "About" dialog window accessible via the `?` button next to the language toggle. It contains brief information about the add-on and a link to the GitHub repository. It works across both the login and main pages and supports i18n translations.

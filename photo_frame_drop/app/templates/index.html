@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop</title>
-  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.2" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.3" />
 </head>
 <body>
   <!-- ─── Header ─────────────────────────────────────────────────── -->
@@ -58,10 +58,12 @@
   </main>
 
   <!-- ─── Lightbox ────────────────────────────────────────────────── -->
-  <div id="lightbox" class="lightbox" style="display: none;">
-    <span class="lightbox-close" aria-label="Close lightbox">&times;</span>
-    <img id="lightbox-img" src="" alt="Full size preview" />
-  </div>
+  <dialog id="lightbox" class="lightbox-dialog" aria-label="Image preview">
+    <div class="lightbox-content">
+      <span class="lightbox-close" aria-label="Close lightbox">&times;</span>
+      <img id="lightbox-img" src="" alt="Full size preview" />
+    </div>
+  </dialog>
 
   <!-- ─── About Dialog ────────────────────────────────────────────── -->
   <dialog id="about-dialog" class="about-dialog">
@@ -334,16 +336,17 @@
     
     function openLightbox(filename) {
         lightboxImg.src = window.basePath + "/media/" + encodeURIComponent(filename);
-        lightbox.style.display = "flex";
+        lightbox.showModal();
+        lightboxImg.focus();
     }
     
     function closeLightbox() {
-        lightbox.style.display = "none";
+        lightbox.close();
         lightboxImg.src = "";
     }
 
     lightbox.addEventListener("click", (e) => {
-        if (e.target !== lightboxImg) {
+        if (e.target === lightbox) {
             closeLightbox();
         }
     });
@@ -351,12 +354,6 @@
     if (lightboxClose) {
         lightboxClose.addEventListener("click", closeLightbox);
     }
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && lightbox.style.display === "flex") {
-            closeLightbox();
-        }
-    });
 
     async function deletePhoto(filename, card) {
       if (!confirm(I18N[lang].confirm_delete(filename))) return;
