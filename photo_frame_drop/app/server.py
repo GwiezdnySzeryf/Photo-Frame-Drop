@@ -193,9 +193,8 @@ async def handle_login(request: web.Request) -> web.Response:
             send_ha_notification(
                 token=config["supervisor_token"],
                 message=f"Błędna próba logowania do Photo Frame Drop z adresu IP: {client_ip}",
-                title="⚠️ Alert bezpieczeństwa: Photo Frame Drop"
+                title="⚠️ Alert bezpieczeństwa: Photo Frame Drop",
             )
-        )
         )
 
     return web.HTTPFound(f"{base_path}/?error=wrong_password")

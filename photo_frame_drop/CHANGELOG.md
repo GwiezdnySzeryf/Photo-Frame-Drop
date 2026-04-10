@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.18] - 2026-04-06
+### Fixed
+- Fixed an `unmatched ')'` SyntaxError in `server.py` on startup, which caused the add-on to fail to start and crash immediately upon launch.
+
 ## [2.0.17] - 2026-04-06
 ### Security & Optimization
 - **Path Traversal Security**: Replaced string-based `.startswith()` checks with Python's safer `.is_relative_to()` to prevent edge-case directory escapes (e.g. escaping `/media/digital_frame` to `/media/digital_frame_secret`).
