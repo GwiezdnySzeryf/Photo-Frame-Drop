@@ -72,9 +72,14 @@
       <h2 id="t-about-title">O dodatku</h2>
       <p id="t-about-desc">Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.</p>
       
-      <a href="https://github.com/GwiezdnySzeryf/Photo-Frame-Drop" target="_blank" rel="noopener noreferrer" class="github-link">
+      <a href="https://github.com/GwiezdnySzeryf/Photo-Frame-Drop" target="_blank" rel="noopener noreferrer" class="github-link" style="margin-bottom: 0.5rem;">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-        GitHub Repository
+        <span id="t-repo">Repozytorium GitHub</span>
+      </a>
+      
+      <a href="https://github.com/GwiezdnySzeryf" target="_blank" rel="noopener noreferrer" class="github-link">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span id="t-profile">Twórca - GwiezdnySzeryf</span>
       </a>
       
       <button type="button" id="btn-close-about" class="btn-ghost" style="width:100%; margin-top: 1rem;">Zamknij</button>
@@ -102,6 +107,8 @@
         confirm_delete: (name) => `Czy na pewno usunąć "${name}"?`,
         about_title: "O dodatku",
         about_desc: "Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.",
+        repo: "Repozytorium GitHub",
+        profile: "Twórca - GwiezdnySzeryf",
         close: "Zamknij"
       },
       en: {
@@ -119,6 +126,8 @@
         confirm_delete: (name) => `Delete "${name}"?`,
         about_title: "About",
         about_desc: "Photo Frame Drop is a tool to easily upload photos to your digital picture frame straight from Home Assistant.",
+        repo: "GitHub Repository",
+        profile: "Creator - GwiezdnySzeryf",
         close: "Close"
       }
     };
@@ -138,6 +147,8 @@
       
       document.getElementById("t-about-title").textContent = t.about_title;
       document.getElementById("t-about-desc").textContent = t.about_desc;
+      document.getElementById("t-repo").textContent = t.repo;
+      document.getElementById("t-profile").textContent = t.profile;
       document.getElementById("btn-close-about").textContent = t.close;
       
       // Update existing list/status texts

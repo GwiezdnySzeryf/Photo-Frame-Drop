@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.25] - 2026-04-06
+### Added
+- Expanded the "About" dialog to include a second button linking directly to the creator's GitHub profile (`@GwiezdnySzeryf`). Also fully integrated the texts of these new links into the dynamic EN/PL language translation system.
+
 ## [2.0.24] - 2026-04-06
 ### Added
 - Added a loading spinner to the Lightbox gallery preview. When clicking a photo, a spinner will display while the high-resolution image is downloading from the server, and the old image is hidden entirely. The new image smoothly fades in once fully loaded, eliminating the "flashing" or glitchy visual delay of the previous photo sticking around.
