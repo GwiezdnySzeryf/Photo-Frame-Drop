@@ -43,9 +43,9 @@ body {
   text-align: center;
 }
 
-.login-icon { height: 110px; width: auto; margin: 0 auto 1.5rem auto; display: block; }
+.login-icon { height: 120px; width: auto; margin: 0 auto 0 auto; display: block; }
 
-.login-card h1 { font-size: 1.65rem; margin-bottom: 1.5rem; color: var(--text); }
+.login-title { font-size: 1.85rem; margin-bottom: 1.5rem; color: var(--text); font-family: 'Quicksand', sans-serif; font-weight: 700; }
 
 .error-banner {
   background: rgba(248,113,113,.15);

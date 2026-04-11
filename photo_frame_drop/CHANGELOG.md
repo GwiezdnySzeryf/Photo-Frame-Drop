@@ -5,6 +5,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.29] - 2026-04-06
+### Changed
+- Reverted the login screen design to prominently feature the "Photo Frame Drop" title text below the logo, with the word "Drop" elegantly styled in blue (`#2563eb`), to better match the original aesthetic.
+- Replaced the large square `logo_main.svg` on the login screen with the cleaner, plain logo (`logo_plain.svg`).
+- Increased the size of the plain logo on the login screen and added a subtle white ambient glow effect to make it pop beautifully against the dark background.
+- Fixed a bug where missing title elements on the login page crashed the translation script, rendering the "About" and "Language" buttons unresponsive.
+
 ## [2.0.28] - 2026-04-06
 ### Changed
 - Removed the redundant HTML title text from the login screen, as the primary SVG logo already contains the full "Photo Frame Drop" typography.

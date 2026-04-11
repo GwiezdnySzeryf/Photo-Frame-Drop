@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop — Login</title>
-  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.7" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.8" />
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body class="login-page">
@@ -14,9 +14,10 @@
       <button type="button" class="btn-ghost" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" id="btn-lang" aria-label="Toggle language">EN</button>
     </div>
     
-    <div style="margin-bottom: 1.5rem;">
-      <img src="{{ base_path }}/static/logo_main.svg" alt="Photo Frame Drop" class="login-icon" />
+    <div style="margin-bottom: 0.5rem; filter: drop-shadow(0 0 30px rgba(255,255,255,0.15));">
+      <img src="{{ base_path }}/static/logo_plain.svg" alt="Photo Frame Drop Logo" class="login-icon" />
     </div>
+    <h1 id="t-title" class="login-title">Photo Frame <span style="color: #2563eb;">Drop</span></h1>
     <p class="login-desc">{{ login_description }}</p>
 
     <div id="error-banner" class="error-banner" style="display:none"></div>
@@ -62,7 +63,7 @@
 
     const I18N = {
       pl: {
-        title: "Photo Frame Drop",
+        title: 'Photo Frame <span style="color: #2563eb;">Drop</span>',
         password: "Hasło",
         submit: "Zaloguj się",
         placeholder: "Wpisz hasło",
@@ -74,7 +75,7 @@
         close: "Zamknij"
       },
       en: {
-        title: "Photo Frame Drop",
+        title: 'Photo Frame <span style="color: #2563eb;">Drop</span>',
         password: "Password",
         submit: "Sign in",
         placeholder: "Enter password",
@@ -92,7 +93,7 @@
     function applyTranslations() {
       document.documentElement.lang = lang;
       const t = I18N[lang];
-      document.getElementById("t-title").textContent = t.title;
+      document.getElementById("t-title").innerHTML = t.title;
       document.getElementById("t-password").textContent = t.password;
       document.getElementById("password").placeholder = t.placeholder;
       document.getElementById("t-submit").textContent = t.submit;
