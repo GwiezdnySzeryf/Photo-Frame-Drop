@@ -366,15 +366,17 @@ async def handle_delete_photo(request: web.Request) -> web.Response:
 
     try:
         target.unlink()
-
-        # Cleanup orphaned thumbnail if exists
-        thumb_path = media_root / ".thumbs" / f"{filename}.jpg"
-        if thumb_path.exists():
-            thumb_path.unlink()
-
     except OSError as exc:
         logger.error("Cannot delete %s: %s", target, exc)
         raise web.HTTPInternalServerError(reason="Could not delete file.") from exc
+
+    # Cleanup orphaned thumbnail if exists (best-effort)
+    try:
+        thumb_path = media_root / ".thumbs" / f"{filename}.jpg"
+        if thumb_path.exists():
+            thumb_path.unlink()
+    except OSError as exc:
+        logger.warning("Could not delete thumbnail for %s: %s", filename, exc)
 
     client_ip = _get_client_ip(request)
     logger.info("Deleted: %s (requested by %s)", filename, client_ip)

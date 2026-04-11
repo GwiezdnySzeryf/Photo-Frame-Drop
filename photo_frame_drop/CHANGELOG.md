@@ -5,12 +5,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [2.0.30] - 2026-04-06
-### Added
-- Added an optional security feature to send a persistent alert to the Home Assistant dashboard whenever an invalid login attempt occurs, along with the attacker's IP. Toggleable via `notify_on_failed_login` in the configuration.
-- Introduced a full-screen, native HTML5 `<dialog>` lightbox for gallery images. Users can now click on any thumbnail to view a high-resolution preview of the uploaded photo.
+## [2.0.31] - 2026-04-06
+### Security & Optimization
+- **XSS Prevention**: Safely HTML-escaped the user-provided `login_description` string.
+- **Cookie Scope**: Pinned the session cookie's `path` directive strictly to the addon's dynamic Ingress `base_path` rather than the HA root, reducing exposure and potential conflicts with other Home Assistant services.
+- **Garbage Collection**: Fixed an issue where deleting a photo from the gallery left behind orphaned cache files in `.thumbs/`. Thumbnails are now properly removed alongside their source images (done as a best-effort, non-blocking operation).
+- **Disk I/O Optimization**: Restructured the directory listing function to query the `stat()` metadata only once per file instead of twice, shaving off latency when loading galleries with thousands of images.
+- **Path Validation**: Tightened `target_folder` validation in `run.sh` to fully reject any path-like structures containing slashes `/` or `\`.
 
-## [2.0.29] - 2026-04-06
+## [2.0.30] - 2026-04-06
 ### Changed
 - Reverted the login screen design to prominently feature the "Photo Frame Drop" title text below the logo, with the word "Drop" elegantly styled in blue (`#2563eb`), to better match the original aesthetic.
 - Replaced the large square `logo_main.svg` on the login screen with the cleaner, plain logo (`logo_plain.svg`).
