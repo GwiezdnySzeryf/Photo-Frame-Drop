@@ -181,6 +181,7 @@ async def handle_login(request: web.Request) -> web.Response:
             secure=is_https,
             samesite="Strict",
             max_age=7 * 24 * 3600,
+            path=base_path or "/",
         )
         logger.info("Successful login from %s", client_ip)
         return response
@@ -204,7 +205,7 @@ async def handle_logout(request: web.Request) -> web.Response:
     _check_csrf(request)
     base_path = _get_base_path(request)
     response = web.json_response({"status": "logged_out"})
-    response.del_cookie("pfd_session")
+    response.del_cookie("pfd_session", path=base_path or "/")
     return response
 
 
@@ -319,19 +320,18 @@ async def handle_list_photos(request: web.Request) -> web.Response:
     allowed: frozenset[str] = config["allowed_extensions"]
 
     try:
-        photos = sorted(
-            [
-                {
-                    "name": f.name,
-                    "size": f.stat().st_size,
-                    "modified": f.stat().st_mtime,
-                }
-                for f in media_path.iterdir()
-                if f.is_file() and f.suffix.lower().lstrip(".") in allowed
-            ],
-            key=lambda x: x["modified"],
-            reverse=True,
-        )
+        photos = []
+        for f in media_path.iterdir():
+            if f.is_file() and f.suffix.lower().lstrip(".") in allowed:
+                st = f.stat()
+                photos.append(
+                    {
+                        "name": f.name,
+                        "size": st.st_size,
+                        "modified": st.st_mtime,
+                    }
+                )
+        photos.sort(key=lambda x: x["modified"], reverse=True)
     except OSError as exc:
         logger.error("Cannot list photos in %s: %s", media_path, exc)
         raise web.HTTPInternalServerError(
@@ -366,6 +366,12 @@ async def handle_delete_photo(request: web.Request) -> web.Response:
 
     try:
         target.unlink()
+
+        # Cleanup orphaned thumbnail if exists
+        thumb_path = media_root / ".thumbs" / f"{filename}.jpg"
+        if thumb_path.exists():
+            thumb_path.unlink()
+
     except OSError as exc:
         logger.error("Cannot delete %s: %s", target, exc)
         raise web.HTTPInternalServerError(reason="Could not delete file.") from exc

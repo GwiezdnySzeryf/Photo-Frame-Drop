@@ -5,6 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.30] - 2026-04-06
+### Added
+- Added an optional security feature to send a persistent alert to the Home Assistant dashboard whenever an invalid login attempt occurs, along with the attacker's IP. Toggleable via `notify_on_failed_login` in the configuration.
+- Introduced a full-screen, native HTML5 `<dialog>` lightbox for gallery images. Users can now click on any thumbnail to view a high-resolution preview of the uploaded photo.
+
 ## [2.0.29] - 2026-04-06
 ### Changed
 - Reverted the login screen design to prominently feature the "Photo Frame Drop" title text below the logo, with the word "Drop" elegantly styled in blue (`#2563eb`), to better match the original aesthetic.
