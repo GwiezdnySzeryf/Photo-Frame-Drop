@@ -5,6 +5,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.28] - 2026-04-06
+### Changed
+- Removed the redundant HTML title text from the login screen, as the primary SVG logo already contains the full "Photo Frame Drop" typography.
+- Increased the size of the logo on the login screen to better center the layout.
+- Enlarged the plain logo (`logo_plain.svg`) in the top navigation bar of the gallery.
+- Enhanced responsive design: The "Photo Frame Drop" text in the top navigation bar is now automatically hidden on small mobile screens to prevent layout overlap, leaving only the recognizable frame icon.
+
 ## [2.0.27] - 2026-04-06
 ### Added
 - Complete branding overhaul! Replaced generic text emojis (`🖼️`, `📸`) with the custom SVG logos provided by the creator.

@@ -43,7 +43,7 @@ body {
   text-align: center;
 }
 
-.login-icon { height: 90px; width: auto; margin: 0 auto .75rem auto; display: block; }
+.login-icon { height: 110px; width: auto; margin: 0 auto 1.5rem auto; display: block; }
 
 .login-card h1 { font-size: 1.65rem; margin-bottom: 1.5rem; color: var(--text); }
 
@@ -109,8 +109,10 @@ header {
   z-index: 10;
 }
 
-.header-icon { height: 32px; width: auto; display: block; }
+.header-icon { height: 42px; width: auto; display: block; }
 header h1 { font-size: 1.35rem; font-weight: 700; margin-left: 0.5rem; }
+
+.desktop-only { display: block; }
 
 .btn-ghost {
   background: transparent;
@@ -403,4 +405,5 @@ main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 @media (max-width: 480px) {
   .gallery { grid-template-columns: 1fr; }
   main { padding: 1.25rem .75rem 3rem; }
+  .desktop-only { display: none !important; }
 }
