@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Frame Drop</title>
-  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.5" />
+  <link rel="stylesheet" href="{{ base_path }}/static/style.css?v=3.0.6" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- ─── Header ─────────────────────────────────────────────────── -->
   <header>
-    <span class="header-icon">🖼️</span>
-    <h1 id="t-title">Photo Frame Drop</h1>
+    <img src="{{ base_path }}/static/logo_plain.svg" alt="Logo" class="header-icon" />
+    <h1 id="t-title" style="font-family: 'Quicksand', sans-serif;">Photo Frame Drop</h1>
     <div style="margin-left:auto; display:flex; gap:0.5rem">
       <button type="button" class="btn-ghost" id="btn-about" aria-label="About">?</button>
       <button type="button" class="btn-ghost" id="btn-lang" aria-label="Toggle language">EN</button>
@@ -69,6 +70,7 @@
   <!-- ─── About Dialog ────────────────────────────────────────────── -->
   <dialog id="about-dialog" class="about-dialog">
     <div class="dialog-content">
+      <img src="{{ base_path }}/static/logo_transparent.svg" alt="Photo Frame Drop Logo" style="max-width: 150px; margin-bottom: 1rem;" />
       <h2 id="t-about-title">O dodatku</h2>
       <p id="t-about-desc">Photo Frame Drop to narzędzie do łatwego przesyłania zdjęć na Twoją cyfrową ramkę prosto z Home Assistanta.</p>
       
@@ -196,11 +198,16 @@
     dropZone.addEventListener("dragover", e => {
       e.preventDefault();
       dropZone.classList.add("drag-over");
+      document.querySelector(".drop-icon").textContent = "📸";
     });
-    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("drag-over");
+      document.querySelector(".drop-icon").textContent = "📷";
+    });
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
       dropZone.classList.remove("drag-over");
+      document.querySelector(".drop-icon").textContent = "📷";
       uploadFiles([...e.dataTransfer.files]);
     });
 

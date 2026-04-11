@@ -43,9 +43,9 @@ body {
   text-align: center;
 }
 
-.login-icon { font-size: 3rem; margin-bottom: .75rem; }
+.login-icon { height: 90px; width: auto; margin: 0 auto .75rem auto; display: block; }
 
-.login-card h1 { font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--text); }
+.login-card h1 { font-size: 1.65rem; margin-bottom: 1.5rem; color: var(--text); }
 
 .error-banner {
   background: rgba(248,113,113,.15);
@@ -109,8 +109,8 @@ header {
   z-index: 10;
 }
 
-.header-icon { font-size: 1.5rem; }
-header h1 { font-size: 1.15rem; font-weight: 700; }
+.header-icon { height: 32px; width: auto; display: block; }
+header h1 { font-size: 1.35rem; font-weight: 700; margin-left: 0.5rem; }
 
 .btn-ghost {
   background: transparent;

@@ -5,6 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.27] - 2026-04-06
+### Added
+- Complete branding overhaul! Replaced generic text emojis (`🖼️`, `📸`) with the custom SVG logos provided by the creator.
+  - Added `logo_main.svg` to the login screen.
+  - Added `logo_plain.svg` to the top-left navigation bar.
+  - Added `logo_transparent.svg` as the header image inside the "About" dialog box.
+  - Integrated the `Quicksand` Google Font to match the exact typography of the new logos.
+  - Converted the main SVG to high-quality PNGs (`icon.png`, `logo.png`) for the Home Assistant Add-on Store display.
+  - Drag-and-drop area now toggles between 📷 and 📸 emoji dynamically.
+
 ## [2.0.26] - 2026-04-06
 ### Fixed
 - Fixed an issue where the "Delete" (X) button on photo cards was styled as raw text rather than an icon, resulting in layout misalignment and poor UI integration. Replaced the text 'X' with a clean, inline SVG trash can icon to match the application's aesthetic.

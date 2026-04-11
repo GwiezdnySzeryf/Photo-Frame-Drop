@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="65.768578mm"
+   height="77.45105mm"
+   viewBox="0 0 65.768578 77.45105"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1"><style
+       id="style1">
+      .frame { stroke: #1f2937; stroke-width: 14; fill: none; stroke-linejoin: round; }
+      .photo { fill: white; stroke: #1f2937; stroke-width: 10; stroke-linejoin: round; }
+      .mountain1 { fill: #60a5fa; }
+      .mountain2 { fill: #2563eb; }
+      .sun { fill: #93c5fd; }
+      .arrow { fill: #2563eb; }
+      .text-main {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 700;
+        font-size: 34px;
+        fill: #1f2937;
+        text-anchor: middle;
+      }
+      .text-drop {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 700;
+        font-size: 34px;
+        fill: #2563eb;
+        text-anchor: middle;
+      }
+    </style></defs><g
+     id="layer1"
+     transform="translate(-255.14217,-102.68152)"><g
+       id="g1"
+       transform="matrix(0.26458333,0,0,0.26458333,56.637218,90.10317)"><rect
+         x="103.79949"
+         y="-8.6309919"
+         width="430.39789"
+         height="430.39789"
+         rx="25.106544"
+         fill="#ffffff"
+         id="rect1"
+         style="stroke-width:0.896662" /><rect
+         x="1216.2764"
+         y="-137.43983"
+         width="220"
+         height="90"
+         rx="8"
+         class="frame"
+         id="rect2" /><g
+         transform="matrix(1.2691353,0.72486727,-0.70064764,1.2276488,672.43501,-233.08776)"
+         id="g5"><rect
+           x="207.37764"
+           y="106.56487"
+           width="110"
+           height="145"
+           rx="8"
+           class="photo"
+           id="rect3"
+           transform="rotate(0.75353775)" /><rect
+           x="220.37764"
+           y="119.56487"
+           width="84"
+           height="92"
+           fill="#dbeafe"
+           id="rect4"
+           transform="rotate(0.75353775)" /><circle
+           cx="286.37762"
+           cy="138.56487"
+           r="10"
+           class="sun"
+           id="circle4"
+           transform="rotate(0.75353775)" /><polygon
+           points="218,215 245,170 268,195 302,150 302,215 "
+           class="mountain1"
+           id="polygon4"
+           transform="rotate(0.75353775,260,182.5)" /><polygon
+           points="302,215 235,215 260,178 "
+           class="mountain2"
+           id="polygon5"
+           transform="rotate(0.75353775,260,182.5)" /></g><path
+         class="arrow"
+         d="M 1294.8185,-4.9998489 V 37.000151 h -18 l 18,22 18,-22 h -18 z"
+         id="path5" /><path
+         d="m 952.98308,288.5294 q -16.3324,20.18055 -36.6925,26.05108"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path6" /><path
+         d="m 906.92318,317.17691 q 30,-9 65,0"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path7" /><path
+         d="m 821.36758,305.01436 q 20.56082,15.85101 41.72688,16.84832"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path6-2" /><path
+         d="M 872.80847,322.21984 Q 841.53989,320.4099 809.57448,337.2685"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path7-9" /><text
+         x="1341.3761"
+         y="129.45029"
+         class="text-main"
+         id="text7">Photo Frame</text><text
+         x="1333.8262"
+         y="172.7086"
+         class="text-drop"
+         id="text8">Drop</text><text
+         xml:space="preserve"
+         style="font-size:52.2134px;line-height:0.9;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#2563eb;fill-opacity:1;stroke-width:4.35111"
+         x="873.4455"
+         y="383.71603"
+         id="text1"><tspan
+           id="tspan1"
+           x="873.4455"
+           y="383.71603"
+           style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;line-height:0.9;font-family:Quicksand;-inkscape-font-specification:'Quicksand Medium';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:4.35111">Photo Frame</tspan><tspan
+           x="877.79547"
+           y="431.4978"
+           id="tspan2"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0.9;font-family:Quicksand;-inkscape-font-specification:'Quicksand Bold';text-align:center;letter-spacing:8.70223px;baseline-shift:baseline;text-anchor:middle;fill:#2563eb;fill-opacity:1;stroke-width:4.35111"
+           rotate="11 0">D<tspan
+   style="letter-spacing:8.7px"
+   id="tspan3"
+   rotate="16.299999 16.299999 16.299999 0">rop</tspan></tspan></text><rect
+         x="1562.9965"
+         y="54.472164"
+         width="420.47748"
+         height="420.47748"
+         rx="24.527853"
+         fill="#ffffff"
+         id="rect1-8"
+         style="stroke-width:0.875995" /><g
+         transform="matrix(1.2691353,0.72486727,-0.70064764,1.2276488,1571.1283,-212.97309)"
+         id="g5-5"><rect
+           x="207.37764"
+           y="106.56487"
+           width="110"
+           height="145"
+           rx="8"
+           class="photo"
+           id="rect3-0"
+           transform="rotate(0.75353775)"
+           style="fill:#ffffff;stroke:#1f2937;stroke-width:10;stroke-linejoin:round" /><rect
+           x="220.37764"
+           y="119.56487"
+           width="84"
+           height="92"
+           fill="#dbeafe"
+           id="rect4-9"
+           transform="rotate(0.75353775)"
+           style="fill:#fef5db;fill-opacity:1" /><circle
+           cx="286.37762"
+           cy="138.56487"
+           r="10"
+           class="sun"
+           id="circle4-6"
+           transform="rotate(0.75353775)"
+           style="fill:#816309;fill-opacity:1" /><polygon
+           points="268,195 302,150 302,215 218,215 245,170 "
+           class="mountain1"
+           id="polygon4-3"
+           transform="rotate(0.75353775,260,182.5)"
+           style="fill:#fad360;fill-opacity:1" /><polygon
+           points="235,215 260,178 302,215 "
+           class="mountain2"
+           id="polygon5-8"
+           transform="rotate(0.75353775,260,182.5)"
+           style="fill:#ebb925;fill-opacity:1" /></g><path
+         d="m 1851.6764,308.64407 q -16.3324,20.18054 -36.6925,26.05108"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path6-5" /><path
+         d="m 1805.6165,337.29158 q 30,-9 65,0"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path7-6" /><path
+         d="m 1720.0609,325.12903 q 20.5608,15.851 41.7268,16.84832"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path6-2-1" /><path
+         d="m 1771.5018,342.3345 q -31.2686,-1.80994 -63.234,15.04867"
+         stroke="#1f2937"
+         stroke-width="6"
+         fill="none"
+         stroke-linecap="round"
+         id="path7-9-1" /><text
+         xml:space="preserve"
+         style="font-size:52.2134px;line-height:0.9;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#2563eb;fill-opacity:1;stroke-width:4.35111"
+         x="1772.1387"
+         y="403.83069"
+         id="text1-5"><tspan
+           id="tspan1-9"
+           x="1772.1387"
+           y="403.83069"
+           style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;line-height:0.9;font-family:Quicksand;-inkscape-font-specification:'Quicksand Medium';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke-width:4.35111">Photo Frame</tspan><tspan
+           x="1776.4886"
+           y="451.61246"
+           id="tspan2-8"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0.9;font-family:Quicksand;-inkscape-font-specification:'Quicksand Bold';text-align:center;letter-spacing:8.70223px;baseline-shift:baseline;text-anchor:middle;fill:#ebb925;fill-opacity:1;stroke-width:4.35111"
+           rotate="11 0">D<tspan
+   style="letter-spacing:8.7px;fill:#ebb925;fill-opacity:1"
+   id="tspan3-4"
+   rotate="16.299999 16.299999 16.299999 0 0 0 0 0 0">rop <tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:KaTeX_Caligraphic;-inkscape-font-specification:KaTeX_Caligraphic"
+   id="tspan6">BETA</tspan></tspan></tspan></text><text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0.9;font-family:Quicksand;-inkscape-font-specification:'Quicksand Bold';text-align:center;letter-spacing:8.7px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ebb925;fill-opacity:1"
+         x="2130.9241"
+         y="345.70044"
+         id="text5"><tspan
+           id="tspan5"
+           x="2130.9241"
+           y="345.70044"></tspan></text></g></g></svg>
