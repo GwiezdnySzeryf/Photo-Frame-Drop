@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.26] - 2026-04-06
+### Fixed
+- Fixed an issue where the "Delete" (X) button on photo cards was styled as raw text rather than an icon, resulting in layout misalignment and poor UI integration. Replaced the text 'X' with a clean, inline SVG trash can icon to match the application's aesthetic.
+
 ## [2.0.25] - 2026-04-06
 ### Added
 - Expanded the "About" dialog to include a second button linking directly to the creator's GitHub profile (`@GwiezdnySzeryf`). Also fully integrated the texts of these new links into the dynamic EN/PL language translation system.
