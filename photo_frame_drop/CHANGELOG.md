@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.32] - 2026-04-06
+### Fixed
+- Fixed an issue where logging in via Home Assistant Ingress failed silently. Changed the session cookie's `SameSite` attribute from `Strict` to `Lax` to allow the cookie to be sent properly when the add-on is embedded inside the Home Assistant iframe interface.
+
 ## [2.0.31] - 2026-04-06
 ### Security & Optimization
 - **XSS Prevention**: Safely HTML-escaped the user-provided `login_description` string.

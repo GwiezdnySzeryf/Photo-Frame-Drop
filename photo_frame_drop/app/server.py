@@ -179,7 +179,7 @@ async def handle_login(request: web.Request) -> web.Response:
             _session_value(config["password"]),
             httponly=True,
             secure=is_https,
-            samesite="Strict",
+            samesite="Lax",
             max_age=7 * 24 * 3600,
             path=base_path or "/",
         )
