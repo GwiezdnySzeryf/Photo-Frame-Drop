@@ -5,9 +5,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.34] - 2026-04-06
+### Fixed
+- Fixed missing `handle_get_thumb` route mapping in the application router. The backend was fully generating the thumbnails but returning `404 Not Found` because the route `/thumb/{filename}` wasn't actually registered in the `aiohttp` web application instance.
+
+## [2.0.33] - 2026-04-06
+### Fixed
+- Added a workaround for Home Assistant Ingress dropping session cookies: In addition to standard HTTP cookies, the authentication system now accepts the session token via a custom `Authorization: Bearer` header on API requests.
+
 ## [2.0.32] - 2026-04-06
 ### Fixed
 - Fixed an issue where logging in via Home Assistant Ingress failed silently. Changed the session cookie's `SameSite` attribute from `Strict` to `Lax` to allow the cookie to be sent properly when the add-on is embedded inside the Home Assistant iframe interface.
+
+## [2.0.32] - 2026-04-06
+### Fixed
+- Fixed missing `handle_get_thumb` route mapping in the application router. The backend was fully generating the thumbnails but returning `404 Not Found` because the route `/thumb/{filename}` wasn't actually registered in the `aiohttp` web application instance.
 
 ## [2.0.31] - 2026-04-06
 ### Security & Optimization

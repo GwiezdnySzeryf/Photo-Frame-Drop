@@ -67,7 +67,20 @@ def _session_value(password: str) -> str:
 
 
 def _is_authenticated(config: dict[str, Any], request: web.Request) -> bool:
-    return request.cookies.get("pfd_session") == _session_value(config["password"])
+    expected_session = _session_value(config["password"])
+
+    # 1. Try reading from cookie
+    if request.cookies.get("pfd_session") == expected_session:
+        return True
+
+    # 2. Try reading from Authorization Header (Ingress fallback)
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header.split(" ", 1)[1]
+        if token == expected_session:
+            return True
+
+    return False
 
 
 def _require_auth(config: dict[str, Any], request: web.Request) -> None:
