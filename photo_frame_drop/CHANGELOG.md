@@ -5,6 +5,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.36] - 2026-04-06
+### Added
+- Added a subtle white ambient glow (`drop-shadow`) behind the transparent logo (`logo_transparent.svg`) in the "About" dialog box. This makes the dark elements of the logo stand out beautifully and legibly against the dark theme background.
+
+## [2.0.36] - 2026-04-06
+### Added
+- Added a subtle white ambient glow (`drop-shadow`) behind the transparent logo (`logo_transparent.svg`) in the "About" dialog box. This makes the dark elements of the logo stand out beautifully and legibly against the dark theme background.
+
 ## [2.0.35] - 2026-04-06
 ### Fixed
 - Reverted the session cookie's `path`, `secure`, and `SameSite` modifications introduced during the security audit. Setting a dynamic `path` based on `X-Ingress-Path` caused total login failures under HA Ingress due to how Supervisor handles cookies across its internal proxy boundaries. Rolled back to the rock-solid base cookie structure to restore Ingress login functionality.
