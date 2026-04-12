@@ -1,4 +1,7 @@
-# Photo Frame Drop
+# OLD PAGE GO TO https://github.com/GwiezdnySzeryf/Gwiezdny-Szeryf-s-HA-Apps
+
+
+## Photo Frame Drop
 
 A **Home Assistant Add-on** that provides a password-protected, drag-and-drop
 web interface for uploading photos directly into your HA `/media` folder —
