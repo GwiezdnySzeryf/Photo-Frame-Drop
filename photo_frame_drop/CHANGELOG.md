@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.0.35] - 2026-04-06
+### Fixed
+- Reverted the session cookie's `path`, `secure`, and `SameSite` modifications introduced during the security audit. Setting a dynamic `path` based on `X-Ingress-Path` caused total login failures under HA Ingress due to how Supervisor handles cookies across its internal proxy boundaries. Rolled back to the rock-solid base cookie structure to restore Ingress login functionality.
+
 ## [2.0.34] - 2026-04-06
 ### Fixed
 - Fixed missing `handle_get_thumb` route mapping in the application router. The backend was fully generating the thumbnails but returning `404 Not Found` because the route `/thumb/{filename}` wasn't actually registered in the `aiohttp` web application instance.

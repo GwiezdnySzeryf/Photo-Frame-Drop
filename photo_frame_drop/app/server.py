@@ -186,15 +186,16 @@ async def handle_login(request: web.Request) -> web.Response:
 
     if entered == config["password"]:
         response = web.HTTPFound(f"{base_path}/")
-        is_https = request.headers.get("X-Forwarded-Proto", request.scheme) == "https"
+
+        # W Ingress Home Assistanta ciasteczka gubią się ze względu na proxy iframe.
+        # Wycofujemy się ze skomplikowanych flag `path` i restrykcji `samesite`,
+        # które odrzucają ciasteczka logowania w tym środowisku, wracając do bazowego kodu.
         response.set_cookie(
             "pfd_session",
             _session_value(config["password"]),
             httponly=True,
-            secure=is_https,
-            samesite="Lax",
+            samesite="Strict",
             max_age=7 * 24 * 3600,
-            path=base_path or "/",
         )
         logger.info("Successful login from %s", client_ip)
         return response
@@ -218,7 +219,7 @@ async def handle_logout(request: web.Request) -> web.Response:
     _check_csrf(request)
     base_path = _get_base_path(request)
     response = web.json_response({"status": "logged_out"})
-    response.del_cookie("pfd_session", path=base_path or "/")
+    response.del_cookie("pfd_session")
     return response
 
 
